@@ -304,3 +304,23 @@ Success criteria must be:
 - "Database can handle 1000 TPS" (implementation detail, use user-facing metric)
 - "React components render efficiently" (framework-specific)
 - "Redis cache hit rate above 80%" (technology-specific)
+
+
+<!-- SDD-TRAIT:superpowers -->
+## SDD Quality Gate
+
+After completing the specification, validate quality:
+1. Check constitution alignment (if `.specify/memory/constitution.md` exists)
+2. Invoke {Skill: sdd:review-spec} to validate completeness and clarity
+3. Ensure spec contains WHAT/WHY only, no implementation details
+
+
+<!-- SDD-TRAIT:worktrees -->
+## Worktree Isolation
+
+After completing the specification and all quality gates:
+
+1. Invoke {Skill: sdd:worktree} with action "create" to:
+   - Create a git worktree for the feature branch in a sibling directory
+   - Restore `main` in the original repo
+   - Print instructions for switching to the worktree

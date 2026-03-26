@@ -196,3 +196,64 @@ Note: This command assumes a complete task breakdown exists in tasks.md. If task
         EXECUTE_COMMAND: {command}
         ```
     - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
+
+
+<!-- SDD-TRAIT:superpowers -->
+## SDD Quality Gates for Implementation
+
+**Before implementation begins:**
+1. Verify spec package exists: spec.md, plan.md, and tasks.md must all be present
+2. If any are missing, stop and instruct the user to generate them first
+
+**After implementation completes:**
+1. Invoke {Skill: sdd:review-code} to check code compliance against spec
+2. Invoke {Skill: sdd:verification-before-completion} for final verification
+
+
+<!-- SDD-TRAIT:teams -->
+## Agent Teams: MANDATORY for Multi-Task Implementation
+
+**ENFORCEMENT**: This section is NON-NEGOTIABLE when implementing 2+ independent tasks.
+
+### Phase Marker (FIRST action)
+
+Before any implementation logic, set the phase marker so the teams enforcement hook
+is active for this session:
+
+```bash
+echo "implement" > .specify/.sdd-phase
+```
+
+When implementation completes (success or failure), clean it up:
+
+```bash
+rm -f .specify/.sdd-phase
+```
+
+### Decision Gate (BEFORE any implementation)
+
+When the implement skill is invoked with multiple tasks:
+
+1. **CHECK**: Is `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` set?
+   - If not: Set it in `.claude/settings.local.json`, inform user restart needed, STOP.
+   - If yes: proceed.
+
+2. **DELEGATE**: Call `{Skill: sdd:teams-orchestrate}` for task graph analysis,
+   teammate spawning in worktrees, spec compliance review, and merge coordination.
+   Do NOT proceed with direct implementation.
+
+### When teams are NOT needed
+- Single sequential task with no parallelism opportunity
+- Pure verification/validation work (clippy, test runs)
+- Fixing a single compile error or merge conflict
+
+### Anti-patterns (NEVER do these)
+- Using `Agent` tool with `run_in_background` instead of Agent Teams
+- Implementing tasks directly when 2+ independent tasks exist
+- Skipping the pre-flight check
+
+
+<!-- SDD-TRAIT:worktrees -->
+## Worktree Context
+
+You are likely running in a worktree created by the `worktrees` trait. The spec and plan files in this worktree contain all context needed for implementation. No separate handoff file is needed.

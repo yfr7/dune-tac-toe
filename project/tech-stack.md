@@ -7,7 +7,7 @@
 ```
 ┌─────────────────────────────┐
 │   Frontend (Vite + React)   │
-│   TypeScript, CSS           │
+│   TypeScript, Tailwind CSS  │
 │   Port 5173                 │
 ├─────────────────────────────┤
 │          REST API           │
@@ -26,7 +26,7 @@
 |--------|--------|
 | **Build tool** | [Vite](https://vitejs.dev/) |
 | **Framework** | [React 19](https://react.dev/) with TypeScript |
-| **Styling** | CSS Modules or vanilla CSS (no UI library for PoC) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
 | **HTTP client** | `fetch` API (no axios needed for PoC) |
 
 ### Key Frontend Responsibilities

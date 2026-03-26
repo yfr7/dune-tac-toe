@@ -151,3 +151,54 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 - Use absolute paths
 - ERROR on gate failures or unresolved clarifications
+
+
+<!-- SDD-TRAIT:superpowers -->
+## SDD Quality Gates for Planning
+
+**Before generating the plan:**
+1. Invoke {Skill: sdd:review-spec} to validate the spec is sound
+2. If review finds critical issues, stop and fix before planning
+
+**After the plan is generated:**
+1. Run `/speckit.tasks` to generate the task breakdown
+2. Invoke {Skill: sdd:review-plan} to validate coverage, task quality, and generate REVIEWERS.md
+
+**Pre-PR Quality Gate (mandatory):**
+
+Before creating a spec PR, verify that ALL three quality checks have been completed:
+1. `/sdd:review-spec` (spec soundness, completeness, implementability)
+2. `/sdd:review-plan` (coverage matrix, task quality, REVIEWERS.md generation)
+3. `/speckit.clarify` (clarification questions resolved, answers encoded in spec)
+
+If any of these have NOT been run during this planning session, run them now before proceeding. Do NOT skip any of these steps. The REVIEWERS.md file MUST exist in the spec directory.
+
+**Commit and PR:**
+1. Commit spec artifacts (spec.md, plan.md, tasks.md, REVIEWERS.md) to the feature branch
+2. **Ask the user** before creating a spec PR. Do NOT create a PR automatically.
+   - If approved, proceed with:
+   - Target remote: `upstream` if configured, otherwise `origin`
+   - PR title: feature name from spec
+   - PR body: summarize the feature, then direct reviewers to REVIEWERS.md
+     in the spec directory for detailed review guidance
+
+
+<!-- SDD-TRAIT:teams -->
+## Agent Teams: Parallel Codebase Research for Planning
+
+When this trait is active, orchestrate the research phase of planning using
+Claude Code Agent Teams for parallel codebase exploration before the lead
+generates the plan.
+
+**Pre-flight**: Check if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is enabled.
+If not, set it in `.claude/settings.local.json` under `env` and inform the user
+that a restart is needed.
+
+**Execution**: Delegate to {Skill: sdd:teams-research} for research topic
+identification, agent spawning, findings consolidation, and plan generation.
+
+
+<!-- SDD-TRAIT:worktrees -->
+## Worktree Context
+
+You are likely running in a worktree created by the `worktrees` trait. The spec file in this worktree contains all decisions from the brainstorm/specify session. No separate handoff file is needed.

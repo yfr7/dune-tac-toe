@@ -1,7 +1,37 @@
 [project]
 name = "backend"
 version = "0.1.0"
-description = "backend for the Dune-Tac-Toe Game"
+description = "Backend for the Dune Tac Toe game"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "fastapi>=0.135.2",
+    "uvicorn>=0.42.0",
+    "langgraph>=1.1.3",
+    "openai>=2.30.0",
+    "pydantic-settings>=2.13.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "httpx>=0.28.1",
+    "ruff>=0.15.7",
+]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "I", "UP"]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
