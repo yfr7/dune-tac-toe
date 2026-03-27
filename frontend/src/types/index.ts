@@ -22,6 +22,7 @@ export interface Character {
   id: CharacterId;
   name: string;
   difficulty: Difficulty;
+  difficultyRank: 1 | 2 | 3;
   description: string;
 }
 
