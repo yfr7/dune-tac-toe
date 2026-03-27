@@ -53,4 +53,48 @@ describe('CommentaryBox', () => {
     );
     expect(screen.getByText('Stilgar')).toBeInTheDocument();
   });
+
+  describe('opponent-themed styling (T019)', () => {
+    it('applies Baron Harkonnen theme: deep-blue bg, dust border, bone label', () => {
+      render(<CommentaryBox {...defaultProps} />);
+      const container = screen.getByText('Baron Harkonnen').closest('[data-character]');
+      expect(container).toHaveAttribute('data-character', 'baron_harkonnen');
+      expect(container?.className).toContain('bg-deep-blue/40');
+      expect(container?.className).toContain('border-dust');
+      const label = screen.getByText('Baron Harkonnen');
+      expect(label.className).toContain('text-bone');
+    });
+
+    it('applies Reverend Mother theme: sand-medium bg, gold border, gold label', () => {
+      render(
+        <CommentaryBox
+          characterName="Reverend Mother"
+          commentary="As it was foreseen."
+          characterId="reverend_mother"
+        />,
+      );
+      const container = screen.getByText('Reverend Mother').closest('[data-character]');
+      expect(container).toHaveAttribute('data-character', 'reverend_mother');
+      expect(container?.className).toContain('bg-sand-medium');
+      expect(container?.className).toContain('border-gold');
+      const label = screen.getByText('Reverend Mother');
+      expect(label.className).toContain('text-gold');
+    });
+
+    it('applies Stilgar theme: sand-medium bg, spice-orange border, spice-orange label', () => {
+      render(
+        <CommentaryBox
+          characterName="Stilgar"
+          commentary="The desert tests all."
+          characterId="stilgar"
+        />,
+      );
+      const container = screen.getByText('Stilgar').closest('[data-character]');
+      expect(container).toHaveAttribute('data-character', 'stilgar');
+      expect(container?.className).toContain('bg-sand-medium');
+      expect(container?.className).toContain('border-spice-orange');
+      const label = screen.getByText('Stilgar');
+      expect(label.className).toContain('text-spice-orange');
+    });
+  });
 });
