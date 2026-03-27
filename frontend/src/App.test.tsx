@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi, beforeEach, afterEach } from 'vitest';
 import App from './App';
 
 describe('App screen routing', () => {
@@ -220,5 +221,113 @@ describe('App screen routing', () => {
     expect(
       screen.queryByRole('heading', { name: /choose your opponent/i }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('HvCPU flow', () => {
+  const mockCpuResponse = {
+    move: { row: 1, col: 1 },
+    commentary: 'The Palace is mine now.',
+  };
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(mockCpuResponse), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  async function startCpuGame(user: ReturnType<typeof userEvent.setup>) {
+    render(<App />);
+    await user.click(screen.getByRole('button', { name: /human vs cpu/i }));
+    await user.click(screen.getByText('Baron Harkonnen'));
+  }
+
+  it('triggers CPU move after human places a piece', async () => {
+    const user = userEvent.setup();
+    await startCpuGame(user);
+
+    // Human plays (0,0)
+    await user.click(
+      screen.getByRole('button', { name: /arrakeen - empty/i }),
+    );
+
+    // Wait for CPU move to complete
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /the palace - o/i })).toBeInTheDocument();
+    });
+
+    // Commentary should be displayed
+    expect(screen.getByText(/The Palace is mine now/)).toBeInTheDocument();
+    // Character name label should appear
+    expect(screen.getByText('Baron Harkonnen')).toBeInTheDocument();
+  });
+
+  it('disables board during CPU thinking', async () => {
+    let resolveResponse: (value: Response) => void;
+    vi.mocked(fetch).mockReturnValue(
+      new Promise<Response>((resolve) => {
+        resolveResponse = resolve;
+      }) as Promise<Response>,
+    );
+
+    const user = userEvent.setup();
+    await startCpuGame(user);
+
+    // Human plays
+    await user.click(
+      screen.getByRole('button', { name: /arrakeen - empty/i }),
+    );
+
+    // Turn indicator should show CPU thinking
+    expect(screen.getByText('CPU is thinking...')).toBeInTheDocument();
+
+    // Resolve the CPU response
+    await vi.waitFor(() => {
+      resolveResponse!(
+        new Response(JSON.stringify(mockCpuResponse), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+    });
+
+    // Wait for CPU move to be placed
+    await waitFor(() => {
+      expect(screen.getByText("Player X's turn")).toBeInTheDocument();
+    });
+  });
+
+  it('sends correct request to backend', async () => {
+    const user = userEvent.setup();
+    await startCpuGame(user);
+
+    await user.click(
+      screen.getByRole('button', { name: /arrakeen - empty/i }),
+    );
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith('/api/move', expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      }));
+    });
+
+    const callBody = JSON.parse(
+      (vi.mocked(fetch).mock.calls[0][1] as RequestInit).body as string,
+    );
+    expect(callBody.character).toBe('baron_harkonnen');
+    expect(callBody.player_piece).toBe('X');
+    expect(callBody.cpu_piece).toBe('O');
+    expect(callBody.board[0][0]).toBe('X');
   });
 });
