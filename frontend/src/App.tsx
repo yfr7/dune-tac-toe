@@ -1,100 +1,66 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
-import heroImg from './assets/hero.png';
-import './App.css';
+import { useGame } from './hooks/use-game';
+import { TitleScreen } from './components/title-screen';
+import { GameBoard } from './components/game-board';
+import { TurnIndicator } from './components/turn-indicator';
+import { GameOverOverlay } from './components/game-over-overlay';
+import type { GameMode } from './types';
+
+type Screen = 'title' | 'opponent-select' | 'game' | 'game-over';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const game = useGame();
+
+  // Derive current screen from game state
+  const currentScreen: Screen = (() => {
+    if (game.gameStatus === 'idle') return 'title';
+    if (game.gameStatus === 'won' || game.gameStatus === 'draw')
+      return 'game-over';
+    return 'game';
+  })();
+
+  const handleSelectMode = (mode: GameMode) => {
+    if (mode === 'human-vs-human') {
+      game.startGame(mode);
+    }
+    // human-vs-cpu will be handled by T017 (opponent selection screen)
+  };
+
+  const handlePlayAgain = () => {
+    game.resetGame();
+  };
+
+  const handleRematch = () => {
+    game.rematch();
+  };
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button className="counter" onClick={() => setCount((count) => count + 1)}>
-          Count is {count}
-        </button>
-      </section>
+      {currentScreen === 'title' && (
+        <TitleScreen onSelectMode={handleSelectMode} />
+      )}
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {(currentScreen === 'game' || currentScreen === 'game-over') && (
+        <div className="flex flex-col items-center flex-1 pt-[var(--space-12)] px-[var(--space-4)]">
+          <TurnIndicator currentTurn={game.currentTurn} />
+          <GameBoard
+            board={game.board}
+            disabled={
+              game.gameStatus !== 'playing'
+            }
+            winningLine={game.winningLine}
+            onCellClick={(row, col) => game.placeMove(row, col)}
+          />
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <GameOverOverlay
+        gameStatus={game.gameStatus}
+        winner={game.winner}
+        opponent={game.selectedOpponent}
+        isHvCpu={game.gameMode === 'human-vs-cpu'}
+        onPlayAgain={handlePlayAgain}
+        onRematch={handleRematch}
+      />
     </>
   );
 }
