@@ -5,3 +5,7 @@ export { GameBoard } from "./game-board";
 export type { GameBoardProps } from "./game-board";
 export { TurnIndicator } from "./turn-indicator";
 export type { TurnIndicatorProps } from "./turn-indicator";
+export { GameOverOverlay } from "./game-over-overlay";
+export type { GameOverOverlayProps } from "./game-over-overlay";
+export { TitleScreen } from "./title-screen";
+export type { TitleScreenProps } from "./title-screen";
