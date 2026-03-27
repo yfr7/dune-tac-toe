@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { BoardCell } from '../src/components/board-cell';
 
 describe('BoardCell', () => {
@@ -122,5 +122,45 @@ describe('BoardCell', () => {
     rerender(<BoardCell {...defaultProps} cellValue="X" />);
     const placedName = screen.getByText('Arrakeen');
     expect(placedName.className).toContain('text-dust/50');
+  });
+
+  describe('invalid move flash (T024)', () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    it('shows blood-red flash when clicking an occupied cell', () => {
+      render(<BoardCell {...defaultProps} cellValue="X" />);
+      const btn = screen.getByRole('button');
+
+      act(() => { btn.click(); });
+      expect(btn.className).toContain('bg-blood-red/20');
+    });
+
+    it('removes flash after 200ms', () => {
+      render(<BoardCell {...defaultProps} cellValue="X" />);
+      const btn = screen.getByRole('button');
+
+      act(() => { btn.click(); });
+      expect(btn.className).toContain('bg-blood-red/20');
+
+      act(() => { vi.advanceTimersByTime(200); });
+      expect(btn.className).not.toContain('bg-blood-red/20');
+    });
+
+    it('does not flash when clicking an empty cell', () => {
+      render(<BoardCell {...defaultProps} />);
+      const btn = screen.getByRole('button');
+
+      act(() => { btn.click(); });
+      expect(btn.className).not.toContain('bg-blood-red/20');
+    });
+
+    it('does not call onClick when clicking an occupied cell', () => {
+      const onClick = vi.fn();
+      render(<BoardCell {...defaultProps} cellValue="X" onClick={onClick} />);
+
+      act(() => { screen.getByRole('button').click(); });
+      expect(onClick).not.toHaveBeenCalled();
+    });
   });
 });

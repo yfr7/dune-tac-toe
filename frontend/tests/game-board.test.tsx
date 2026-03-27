@@ -121,9 +121,10 @@ describe("GameBoard", () => {
       />,
     );
 
+    // Occupied cells are still clickable (for invalid move flash) but not HTML-disabled
     expect(
       screen.getByRole("button", { name: "Arrakeen - X" }),
-    ).toBeDisabled();
+    ).toBeEnabled();
     expect(
       screen.getByRole("button", { name: "Carthag - empty" }),
     ).toBeEnabled();

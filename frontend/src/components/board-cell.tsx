@@ -1,3 +1,4 @@
+import { useCallback, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
 import type { CellValue } from '../types';
 
@@ -22,13 +23,27 @@ export function BoardCell({
   onClick,
 }: BoardCellProps) {
   const isEmpty = cellValue === null;
+  const [flashing, setFlashing] = useState(false);
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleClick = useCallback(() => {
+    if (disabled) return;
+    if (!isEmpty) {
+      // Invalid move — flash red
+      setFlashing(true);
+      if (flashTimer.current) clearTimeout(flashTimer.current);
+      flashTimer.current = setTimeout(() => setFlashing(false), 200);
+      return;
+    }
+    onClick();
+  }, [disabled, isEmpty, onClick]);
 
   return (
     <button
       type="button"
       aria-label={ariaLabel(locationName, cellValue)}
       disabled={disabled}
-      onClick={onClick}
+      onClick={handleClick}
       className={cn(
         // Base cell styles
         'relative flex flex-col items-center justify-center',
@@ -46,6 +61,8 @@ export function BoardCell({
         isEmpty && 'focus-visible:[&_.location-name]:text-bone',
         // Disabled state
         disabled && 'opacity-60 cursor-wait pointer-events-none',
+        // Invalid move flash
+        flashing && 'bg-blood-red/20',
         // Winning cell pulse
         isWinningCell && 'animate-winning-pulse',
       )}

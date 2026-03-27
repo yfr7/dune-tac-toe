@@ -37,7 +37,7 @@ export function GameBoard({
             locationName={BOARD_LOCATIONS[rowIndex][colIndex]}
             cellValue={cellValue}
             isWinningCell={isWinningCell(rowIndex, colIndex, winningLine)}
-            disabled={disabled || cellValue !== null}
+            disabled={disabled}
             onClick={() => onCellClick(rowIndex, colIndex)}
           />
         )),
