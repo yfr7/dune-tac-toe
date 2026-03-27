@@ -125,6 +125,30 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* — Game animations — */
+  --animate-piece-place: piece-place var(--duration-base) ease-out;
+  --animate-winning-pulse: winning-pulse var(--duration-pulse) ease-in-out infinite;
+}
+
+@keyframes piece-place {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes winning-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px var(--gold-bright);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--gold-bright);
+  }
 }
 
 /* — Base resets — */
