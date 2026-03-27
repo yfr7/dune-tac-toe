@@ -4,6 +4,7 @@ description: Execute all tasks from the task breakdown to build the feature. Use
   task generation to systematically implement the planned solution following TDD approach
   where applicable.
 compatibility: Requires spec-kit project structure with .specify/ directory
+context: fork
 metadata:
   author: github-spec-kit
   source: templates/commands/implement.md

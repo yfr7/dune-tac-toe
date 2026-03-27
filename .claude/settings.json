@@ -1,5 +1,19 @@
 {
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd frontend && npx tsc --noEmit 2>&1 | head -20 && npx eslint . --max-warnings 0 2>&1 | head -20; cd ../backend && ruff check . 2>&1 | head -20",
+            "timeout": 30000
+          }
+        ]
+      }
+    ]
   }
 }

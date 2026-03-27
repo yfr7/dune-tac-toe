@@ -5,6 +5,7 @@ description: Create or update feature specifications from natural language descr
   user stories, functional requirements, and acceptance criteria following spec-driven
   development methodology.
 compatibility: Requires spec-kit project structure with .specify/ directory
+context: fork
 metadata:
   author: github-spec-kit
   source: templates/commands/specify.md

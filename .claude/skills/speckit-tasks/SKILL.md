@@ -4,6 +4,7 @@ description: Break down implementation plans into actionable task lists. Use aft
   planning to create a structured task breakdown. Generates tasks.md with ordered,
   dependency-aware tasks.
 compatibility: Requires spec-kit project structure with .specify/ directory
+context: fork
 metadata:
   author: github-spec-kit
   source: templates/commands/tasks.md
