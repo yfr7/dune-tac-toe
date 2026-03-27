@@ -7,6 +7,7 @@ import { GameBoard } from './components/game-board';
 import { TurnIndicator } from './components/turn-indicator';
 import { CommentaryBox } from './components/commentary-box';
 import { GameOverOverlay } from './components/game-over-overlay';
+import { ErrorToast } from './components/error-toast';
 import { getCharacter } from './data/characters';
 import type { CharacterId, GameMode } from './types';
 
@@ -17,6 +18,7 @@ function App() {
   const cpuMove = useCpuMove();
   const [showOpponentSelect, setShowOpponentSelect] = useState(false);
   const [cpuThinking, setCpuThinking] = useState(false);
+  const [errorDismissed, setErrorDismissed] = useState(false);
   const processingCpuMove = useRef(false);
 
   const isHvCpu = game.gameMode === 'human-vs-cpu';
@@ -86,6 +88,22 @@ function App() {
     }
   }, [isHvCpu, game.gameStatus, game.currentTurn, triggerCpuMove]);
 
+  // Reset dismissed state when a new error occurs
+  useEffect(() => {
+    if (cpuMove.error) setErrorDismissed(false);
+  }, [cpuMove.error]);
+
+  const showErrorToast = isHvCpu && !!cpuMove.error && !errorDismissed;
+
+  const handleRetry = useCallback(() => {
+    setErrorDismissed(false);
+    triggerCpuMove();
+  }, [triggerCpuMove]);
+
+  const handleDismissError = useCallback(() => {
+    setErrorDismissed(true);
+  }, []);
+
   const handleCellClick = (row: number, col: number) => {
     if (isHvCpu && game.currentTurn === 'O') return;
     game.placeMove(row, col);
@@ -137,6 +155,14 @@ function App() {
         onPlayAgain={handlePlayAgain}
         onRematch={handleRematch}
       />
+
+      {showErrorToast && (
+        <ErrorToast
+          message={cpuMove.error!}
+          onRetry={handleRetry}
+          onDismiss={handleDismissError}
+        />
+      )}
     </>
   );
 }

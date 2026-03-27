@@ -330,4 +330,100 @@ describe('HvCPU flow', () => {
     expect(callBody.cpu_piece).toBe('O');
     expect(callBody.board[0][0]).toBe('X');
   });
+
+  it('shows error toast when CPU move fails', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('Network error'));
+
+    const user = userEvent.setup();
+    await startCpuGame(user);
+
+    await user.click(
+      screen.getByRole('button', { name: /arrakeen - empty/i }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Network error')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /retry/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('retains board pieces during error state', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('Network error'));
+
+    const user = userEvent.setup();
+    await startCpuGame(user);
+
+    await user.click(
+      screen.getByRole('button', { name: /arrakeen - empty/i }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    // Human's piece should still be on the board
+    expect(
+      screen.getByRole('button', { name: /arrakeen - x/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('retries CPU move when Retry is clicked', async () => {
+    vi.mocked(fetch)
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(mockCpuResponse), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+
+    const user = userEvent.setup();
+    await startCpuGame(user);
+
+    await user.click(
+      screen.getByRole('button', { name: /arrakeen - empty/i }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    // Click Retry
+    await user.click(screen.getByRole('button', { name: /retry/i }));
+
+    // CPU should make its move after retry
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /the palace - o/i }),
+      ).toBeInTheDocument();
+    });
+
+    // Error toast should be gone
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('dismisses error toast when dismiss is clicked', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('Network error'));
+
+    const user = userEvent.setup();
+    await startCpuGame(user);
+
+    await user.click(
+      screen.getByRole('button', { name: /arrakeen - empty/i }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    // Click dismiss
+    await user.click(
+      screen.getByRole('button', { name: /dismiss error/i }),
+    );
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
 });
