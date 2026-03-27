@@ -180,4 +180,45 @@ describe('App screen routing', () => {
 
     expect(screen.getByText('Player O Wins!')).toBeInTheDocument();
   });
+
+  it('shows opponent selection when HvCPU mode is selected', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole('button', { name: /human vs cpu/i }),
+    );
+
+    // Opponent selection screen should appear
+    expect(
+      screen.getByRole('heading', { name: /choose your opponent/i }),
+    ).toBeInTheDocument();
+    // All three characters should be visible
+    expect(screen.getByText('Baron Harkonnen')).toBeInTheDocument();
+    expect(screen.getByText('Reverend Mother')).toBeInTheDocument();
+    expect(screen.getByText('Stilgar')).toBeInTheDocument();
+    // Title screen should be gone
+    expect(
+      screen.queryByRole('heading', { name: /dune tac toe/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('starts HvCPU game when opponent is selected', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole('button', { name: /human vs cpu/i }),
+    );
+    // Select Baron Harkonnen
+    await user.click(screen.getByText('Baron Harkonnen'));
+
+    // Game board should appear
+    expect(
+      screen.getByRole('group', { name: /game board/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Player X's turn")).toBeInTheDocument();
+    // Opponent selection should be gone
+    expect(
+      screen.queryByRole('heading', { name: /choose your opponent/i }),
+    ).not.toBeInTheDocument();
+  });
 });
