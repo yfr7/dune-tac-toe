@@ -1,17 +1,21 @@
+import { useState } from 'react';
 import { useGame } from './hooks/use-game';
 import { TitleScreen } from './components/title-screen';
+import { OpponentSelect } from './components/opponent-select';
 import { GameBoard } from './components/game-board';
 import { TurnIndicator } from './components/turn-indicator';
 import { GameOverOverlay } from './components/game-over-overlay';
-import type { GameMode } from './types';
+import type { CharacterId, GameMode } from './types';
 
 type Screen = 'title' | 'opponent-select' | 'game' | 'game-over';
 
 function App() {
   const game = useGame();
+  const [showOpponentSelect, setShowOpponentSelect] = useState(false);
 
   // Derive current screen from game state
   const currentScreen: Screen = (() => {
+    if (showOpponentSelect) return 'opponent-select';
     if (game.gameStatus === 'idle') return 'title';
     if (game.gameStatus === 'won' || game.gameStatus === 'draw')
       return 'game-over';
@@ -21,8 +25,14 @@ function App() {
   const handleSelectMode = (mode: GameMode) => {
     if (mode === 'human-vs-human') {
       game.startGame(mode);
+    } else {
+      setShowOpponentSelect(true);
     }
-    // human-vs-cpu will be handled by T017 (opponent selection screen)
+  };
+
+  const handleSelectOpponent = (characterId: CharacterId) => {
+    setShowOpponentSelect(false);
+    game.startGame('human-vs-cpu', characterId);
   };
 
   const handlePlayAgain = () => {
@@ -37,6 +47,10 @@ function App() {
     <>
       {currentScreen === 'title' && (
         <TitleScreen onSelectMode={handleSelectMode} />
+      )}
+
+      {currentScreen === 'opponent-select' && (
+        <OpponentSelect onSelectOpponent={handleSelectOpponent} />
       )}
 
       {(currentScreen === 'game' || currentScreen === 'game-over') && (
