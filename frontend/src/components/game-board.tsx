@@ -5,6 +5,7 @@ import { BoardCell } from "./board-cell";
 export interface GameBoardProps {
   board: Board;
   disabled: boolean;
+  cpuThinking?: boolean;
   winningLine: [number, number][] | null;
   onCellClick: (row: number, col: number) => void;
 }
@@ -21,14 +22,19 @@ function isWinningCell(
 export function GameBoard({
   board,
   disabled,
+  cpuThinking = false,
   winningLine,
   onCellClick,
 }: GameBoardProps) {
+  const thinkingStyles = cpuThinking
+    ? 'opacity-60 cursor-wait'
+    : '';
+
   return (
     <div
       role="group"
       aria-label="Game board - 3 by 3 grid"
-      className="grid grid-cols-3 gap-[2px] max-w-[480px] w-full mx-auto bg-sand-light rounded-[4px] p-[var(--space-4)]"
+      className={`grid grid-cols-3 gap-[2px] max-w-[480px] w-full mx-auto bg-sand-light rounded-[4px] p-[var(--space-4)] transition-opacity duration-[var(--duration-fast)] ${thinkingStyles}`}
     >
       {board.map((row: CellValue[], rowIndex: number) =>
         row.map((cellValue: CellValue, colIndex: number) => (

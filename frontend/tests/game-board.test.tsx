@@ -187,4 +187,49 @@ describe("GameBoard", () => {
 
     expect(screen.getAllByRole("button")).toHaveLength(9);
   });
+
+  describe("T023: CPU thinking visual states", () => {
+    it("applies 60% opacity and cursor-wait when cpuThinking is true", () => {
+      render(
+        <GameBoard
+          board={EMPTY_BOARD}
+          disabled={true}
+          cpuThinking={true}
+          winningLine={null}
+          onCellClick={() => {}}
+        />,
+      );
+      const grid = screen.getByRole("group");
+      expect(grid.className).toContain("opacity-60");
+      expect(grid.className).toContain("cursor-wait");
+    });
+
+    it("does not apply thinking styles when cpuThinking is false", () => {
+      render(
+        <GameBoard
+          board={EMPTY_BOARD}
+          disabled={false}
+          cpuThinking={false}
+          winningLine={null}
+          onCellClick={() => {}}
+        />,
+      );
+      const grid = screen.getByRole("group");
+      expect(grid.className).not.toContain("opacity-60");
+      expect(grid.className).not.toContain("cursor-wait");
+    });
+
+    it("defaults cpuThinking to false", () => {
+      render(
+        <GameBoard
+          board={EMPTY_BOARD}
+          disabled={false}
+          winningLine={null}
+          onCellClick={() => {}}
+        />,
+      );
+      const grid = screen.getByRole("group");
+      expect(grid.className).not.toContain("opacity-60");
+    });
+  });
 });

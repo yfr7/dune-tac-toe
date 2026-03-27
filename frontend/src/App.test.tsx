@@ -288,8 +288,8 @@ describe('HvCPU flow', () => {
       screen.getByRole('button', { name: /arrakeen - empty/i }),
     );
 
-    // Turn indicator should show CPU thinking
-    expect(screen.getByText('CPU is thinking...')).toBeInTheDocument();
+    // Turn indicator should show character thinking
+    expect(screen.getByText(/Baron Harkonnen is thinking/)).toBeInTheDocument();
 
     // Resolve the CPU response
     await vi.waitFor(() => {

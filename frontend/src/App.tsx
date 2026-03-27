@@ -110,10 +110,12 @@ function App() {
           <TurnIndicator
             currentTurn={game.currentTurn}
             cpuThinking={cpuThinking}
+            characterName={character?.name}
           />
           <GameBoard
             board={game.board}
             disabled={game.gameStatus !== 'playing' || cpuThinking}
+            cpuThinking={cpuThinking}
             winningLine={game.winningLine}
             onCellClick={handleCellClick}
           />

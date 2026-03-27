@@ -130,6 +130,7 @@
   --animate-piece-place: piece-place var(--duration-base) ease-out;
   --animate-winning-pulse: winning-pulse var(--duration-pulse) ease-in-out infinite;
   --animate-commentary-fade-in: commentary-fade-in var(--duration-slow) ease-out;
+  --animate-thinking-dots: thinking-dots 1.4s ease-in-out infinite;
 }
 
 @keyframes piece-place {
@@ -158,6 +159,18 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes thinking-dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%, 100% {
+    content: '...';
   }
 }
 
