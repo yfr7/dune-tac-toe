@@ -78,4 +78,67 @@ describe("Game over quotes", () => {
       expect(typeof FALLBACK_COMMENTARY).toBe("string");
     });
   });
+
+  describe("US3: character-specific quote distinctness", () => {
+    it("all CPU quotes across all characters and outcomes are globally unique", () => {
+      const allCpuQuotes: string[] = [];
+      for (const character of ALL_CHARACTERS) {
+        for (const outcome of ALL_OUTCOMES) {
+          allCpuQuotes.push(getCpuGameQuote(character, outcome));
+        }
+      }
+      const unique = new Set(allCpuQuotes);
+      expect(unique.size).toBe(allCpuQuotes.length);
+    });
+
+    it("CPU quotes do not overlap with HvH quotes", () => {
+      const cpuQuotes = new Set<string>();
+      for (const character of ALL_CHARACTERS) {
+        for (const outcome of ALL_OUTCOMES) {
+          cpuQuotes.add(getCpuGameQuote(character, outcome));
+        }
+      }
+      const hvhQuotes = [
+        getHvhGameQuote("X"),
+        getHvhGameQuote("O"),
+        getHvhGameQuote(null),
+      ];
+      for (const hvhQuote of hvhQuotes) {
+        expect(cpuQuotes.has(hvhQuote)).toBe(false);
+      }
+    });
+
+    it("Baron quotes reference power, scheming, or cruelty", () => {
+      const baronWin = getCpuGameQuote("baron_harkonnen", "cpu_wins");
+      const baronLose = getCpuGameQuote("baron_harkonnen", "human_wins");
+      // Baron should have a distinct dark/powerful tone
+      expect(baronWin.length).toBeGreaterThan(20);
+      expect(baronLose.length).toBeGreaterThan(20);
+      expect(baronWin).not.toBe(baronLose);
+    });
+
+    it("Reverend Mother quotes have a distinct prophetic tone", () => {
+      const rmWin = getCpuGameQuote("reverend_mother", "cpu_wins");
+      const rmLose = getCpuGameQuote("reverend_mother", "human_wins");
+      expect(rmWin.length).toBeGreaterThan(20);
+      expect(rmLose.length).toBeGreaterThan(20);
+      expect(rmWin).not.toBe(rmLose);
+    });
+
+    it("Stilgar quotes have a distinct desert/Fremen tone", () => {
+      const stilgarWin = getCpuGameQuote("stilgar", "cpu_wins");
+      const stilgarLose = getCpuGameQuote("stilgar", "human_wins");
+      expect(stilgarWin.length).toBeGreaterThan(20);
+      expect(stilgarLose.length).toBeGreaterThan(20);
+      expect(stilgarWin).not.toBe(stilgarLose);
+    });
+
+    it("draw quotes are distinct per character", () => {
+      const drawQuotes = ALL_CHARACTERS.map((c) =>
+        getCpuGameQuote(c, "draw"),
+      );
+      const unique = new Set(drawQuotes);
+      expect(unique.size).toBe(ALL_CHARACTERS.length);
+    });
+  });
 });

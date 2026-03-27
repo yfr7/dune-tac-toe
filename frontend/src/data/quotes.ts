@@ -43,7 +43,7 @@ const CPU_QUOTES: Record<CharacterId, Record<GameOutcome, QuoteEntry>> = {
       text: "Even the smallest worm can shift the sand. Shai-Hulud!",
     },
     draw: {
-      text: "The desert consumes all who fight over it. Perhaps we are both fools.",
+      text: "Neither Fremen nor offworlder claims victory today. The sands remain unchanged.",
     },
   },
 };
