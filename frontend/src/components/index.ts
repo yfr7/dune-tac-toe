@@ -9,3 +9,5 @@ export { GameOverOverlay } from "./game-over-overlay";
 export type { GameOverOverlayProps } from "./game-over-overlay";
 export { TitleScreen } from "./title-screen";
 export type { TitleScreenProps } from "./title-screen";
+export { ErrorToast } from "./error-toast";
+export type { ErrorToastProps } from "./error-toast";
