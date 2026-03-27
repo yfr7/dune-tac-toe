@@ -26,7 +26,7 @@ export function ErrorToast({ message, onRetry, onDismiss }: ErrorToastProps) {
     <div
       role="alert"
       className={cn(
-        'fixed bottom-[var(--space-6)] left-1/2 -translate-x-1/2 z-50',
+        'fixed bottom-[var(--space-6)] left-1/2 -translate-x-1/2 z-[var(--z-toast)]',
         'flex items-center gap-[var(--space-3)]',
         'bg-blood-red text-bone px-[var(--space-4)] py-[var(--space-3)] rounded-[8px]',
         'shadow-lg animate-commentary-fade-in',
