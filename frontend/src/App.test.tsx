@@ -126,4 +126,58 @@ describe('App screen routing', () => {
       screen.getByRole('button', { name: /arrakeen - empty/i }),
     ).toBeInTheDocument();
   });
+
+  it('detects a draw when all 9 squares are filled', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole('button', { name: /human vs human/i }));
+
+    // Play to a draw:
+    // X O X    (0,0)X (0,1)O (0,2)X
+    // X X O    (1,0)X (1,1)X (1,2)O
+    // O X O    (2,0)O (2,1)X (2,2)O
+    await user.click(screen.getByRole('button', { name: /arrakeen - empty/i }));       // X (0,0)
+    await user.click(screen.getByRole('button', { name: /carthag - empty/i }));        // O (0,1)
+    await user.click(screen.getByRole('button', { name: /giedi prime - empty/i }));    // X (0,2)
+    await user.click(screen.getByRole('button', { name: /salusa secundus - empty/i }));// O (1,2)
+    await user.click(screen.getByRole('button', { name: /sietch tabr - empty/i }));    // X (1,0)
+    await user.click(screen.getByRole('button', { name: /jacurutu - empty/i }));       // O (2,0)
+    await user.click(screen.getByRole('button', { name: /the palace - empty/i }));     // X (1,1)
+    await user.click(screen.getByRole('button', { name: /heighliner - empty/i }));     // O (2,2)
+    await user.click(screen.getByRole('button', { name: /tuono basin - empty/i }));    // X (2,1) — draw!
+
+    expect(screen.getByRole('dialog', { name: /game over/i })).toBeInTheDocument();
+    expect(screen.getByText("A Draw in the Desert")).toBeInTheDocument();
+  });
+
+  it('alternates turns correctly (X first, then O)', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole('button', { name: /human vs human/i }));
+
+    expect(screen.getByText("Player X's turn")).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /arrakeen - empty/i }));
+    expect(screen.getByText("Player O's turn")).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /carthag - empty/i }));
+    expect(screen.getByText("Player X's turn")).toBeInTheDocument();
+  });
+
+  it('shows O winning with correct text', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole('button', { name: /human vs human/i }));
+
+    // O wins left column: O at (0,0), (1,0), (2,0) won't work since X goes first
+    // Instead: X plays non-winning, O wins column 1
+    await user.click(screen.getByRole('button', { name: /arrakeen - empty/i }));       // X (0,0)
+    await user.click(screen.getByRole('button', { name: /carthag - empty/i }));        // O (0,1)
+    await user.click(screen.getByRole('button', { name: /sietch tabr - empty/i }));    // X (1,0)
+    await user.click(screen.getByRole('button', { name: /the palace - empty/i }));     // O (1,1)
+    await user.click(screen.getByRole('button', { name: /giedi prime - empty/i }));    // X (0,2)
+    await user.click(screen.getByRole('button', { name: /tuono basin - empty/i }));    // O (2,1) — wins column 1!
+
+    expect(screen.getByText('Player O Wins!')).toBeInTheDocument();
+  });
 });
