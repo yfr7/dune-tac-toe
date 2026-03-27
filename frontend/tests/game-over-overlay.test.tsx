@@ -208,4 +208,150 @@ describe("GameOverOverlay", () => {
     expect(dialog).toHaveAttribute("aria-modal", "true");
     expect(dialog).toHaveAttribute("aria-label", "Game over");
   });
+
+  describe("US3: character-specific closing quotes (T021)", () => {
+    const defaultProps = {
+      onPlayAgain: () => {},
+      onRematch: () => {},
+    };
+
+    it("displays Baron human_wins quote when human beats Baron", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent="baron_harkonnen"
+          isHvCpu={true}
+        />,
+      );
+      // Baron's human_wins quote contains "temporary"
+      expect(screen.getByText(/temporary/i)).toBeInTheDocument();
+    });
+
+    it("displays Baron cpu_wins quote when Baron wins", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="O"
+          opponent="baron_harkonnen"
+          isHvCpu={true}
+        />,
+      );
+      // Baron's cpu_wins quote contains "entertainment"
+      expect(screen.getByText(/entertainment/i)).toBeInTheDocument();
+    });
+
+    it("displays Reverend Mother human_wins quote when human beats her", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent="reverend_mother"
+          isHvCpu={true}
+        />,
+      );
+      // Reverend Mother's human_wins quote contains "Kwisatz Haderach"
+      expect(screen.getByText(/Kwisatz Haderach/i)).toBeInTheDocument();
+    });
+
+    it("displays Reverend Mother cpu_wins quote when she wins", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="O"
+          opponent="reverend_mother"
+          isHvCpu={true}
+        />,
+      );
+      // Reverend Mother's cpu_wins quote contains "written"
+      expect(screen.getByText(/written/i)).toBeInTheDocument();
+    });
+
+    it("displays Stilgar human_wins quote when human beats him", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent="stilgar"
+          isHvCpu={true}
+        />,
+      );
+      // Stilgar's human_wins quote contains "water-brotherhood"
+      expect(screen.getByText(/water-brotherhood/i)).toBeInTheDocument();
+    });
+
+    it("displays Stilgar cpu_wins quote when he wins", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="O"
+          opponent="stilgar"
+          isHvCpu={true}
+        />,
+      );
+      // Stilgar's cpu_wins quote contains "Shai-Hulud"
+      expect(screen.getByText(/Shai-Hulud/i)).toBeInTheDocument();
+    });
+
+    it("displays character-specific draw quote for CPU games", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="draw"
+          winner={null}
+          opponent="baron_harkonnen"
+          isHvCpu={true}
+        />,
+      );
+      // Baron's draw quote contains "stalemate" or "tedious"
+      expect(screen.getByText(/stalemate/i)).toBeInTheDocument();
+    });
+
+    it("displays different quotes for different characters on same outcome", () => {
+      const { unmount: unmount1 } = render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent="baron_harkonnen"
+          isHvCpu={true}
+        />,
+      );
+      const baronQuote = screen.getByRole("dialog").querySelector(".font-display.italic")?.textContent;
+      unmount1();
+
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent="stilgar"
+          isHvCpu={true}
+        />,
+      );
+      const stilgarQuote = screen.getByRole("dialog").querySelector(".font-display.italic")?.textContent;
+
+      expect(baronQuote).not.toBe(stilgarQuote);
+    });
+
+    it("displays HvH quote (not character quote) when not in CPU mode", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      // HvH x_wins quote contains "throne"
+      expect(screen.getByText(/throne/i)).toBeInTheDocument();
+    });
+  });
 });
