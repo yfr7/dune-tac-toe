@@ -7,10 +7,7 @@ export interface CommentaryBoxProps {
   characterId: CharacterId;
 }
 
-const THEMED_STYLES: Record<
-  CharacterId,
-  { container: string; label: string }
-> = {
+const THEMED_STYLES: Record<CharacterId, { container: string; label: string }> = {
   baron_harkonnen: {
     container: 'bg-deep-blue/40 border-dust',
     label: 'text-bone',
@@ -25,11 +22,7 @@ const THEMED_STYLES: Record<
   },
 };
 
-export function CommentaryBox({
-  characterName,
-  commentary,
-  characterId,
-}: CommentaryBoxProps) {
+export function CommentaryBox({ characterName, commentary, characterId }: CommentaryBoxProps) {
   if (!commentary) return null;
 
   const theme = THEMED_STYLES[characterId];

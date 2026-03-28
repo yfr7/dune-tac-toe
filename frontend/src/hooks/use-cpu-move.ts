@@ -23,10 +23,7 @@ export function useCpuMove(): UseCpuMoveResult {
   const [lastRequest, setLastRequest] = useState<LastRequest | null>(null);
 
   const requestMove = useCallback(
-    async (
-      board: Board,
-      character: CharacterId,
-    ): Promise<CpuMoveResponse | null> => {
+    async (board: Board, character: CharacterId): Promise<CpuMoveResponse | null> => {
       setIsLoading(true);
       setError(null);
       setMove(null);
@@ -46,9 +43,7 @@ export function useCpuMove(): UseCpuMoveResult {
         });
 
         if (!response.ok) {
-          throw new Error(
-            `Backend error: ${response.status} ${response.statusText}`,
-          );
+          throw new Error(`Backend error: ${response.status} ${response.statusText}`);
         }
 
         const data: CpuMoveResponse = await response.json();
@@ -57,8 +52,7 @@ export function useCpuMove(): UseCpuMoveResult {
         setIsLoading(false);
         return data;
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'An unexpected error occurred';
+        const message = err instanceof Error ? err.message : 'An unexpected error occurred';
         setError(message);
         setIsLoading(false);
         return null;

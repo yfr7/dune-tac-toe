@@ -170,7 +170,8 @@
 }
 
 @keyframes winning-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 8px var(--gold-bright);
   }
   50% {
@@ -188,14 +189,16 @@
 }
 
 @keyframes thinking-dots {
-  0%, 20% {
-    content: '.';
+  0%,
+  20% {
+    content: ".";
   }
   40% {
-    content: '..';
+    content: "..";
   }
-  60%, 100% {
-    content: '...';
+  60%,
+  100% {
+    content: "...";
   }
 }
 
@@ -251,11 +254,14 @@
 }
 
 @keyframes victory-pulse {
-  0%, 100% {
+  0%,
+  100% {
     text-shadow: 0 0 8px rgba(232, 185, 74, 0.4);
   }
   50% {
-    text-shadow: 0 0 20px rgba(232, 185, 74, 0.8), 0 0 40px rgba(212, 114, 42, 0.3);
+    text-shadow:
+      0 0 20px rgba(232, 185, 74, 0.8),
+      0 0 40px rgba(212, 114, 42, 0.3);
   }
 }
 
@@ -271,7 +277,8 @@
 }
 
 @keyframes opponent-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.7;
   }
   50% {
@@ -307,12 +314,7 @@ button:active {
 /* — Base resets — */
 body {
   margin: 0;
-  background: linear-gradient(
-    180deg,
-    var(--sand-dark) 0%,
-    #2a1f10 40%,
-    #1f1a0e 100%
-  );
+  background: linear-gradient(180deg, var(--sand-dark) 0%, #2a1f10 40%, #1f1a0e 100%);
   color: var(--bone);
   min-height: 100svh;
   position: relative;

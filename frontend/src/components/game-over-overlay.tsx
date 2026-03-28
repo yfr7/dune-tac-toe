@@ -1,10 +1,10 @@
-import { Confetti } from "@neoconfetti/react";
-import { getCpuFaction, PLAYER_FACTION } from "../data/faction-config";
-import { getCpuGameQuote, getHvhGameQuote } from "../data/quotes";
-import type { GameOutcome } from "../data/quotes";
-import type { CharacterId, GameStatus, Piece } from "../types";
+import { Confetti } from '@neoconfetti/react';
+import { getCpuFaction, PLAYER_FACTION } from '../data/faction-config';
+import type { GameOutcome } from '../data/quotes';
+import { getCpuGameQuote, getHvhGameQuote } from '../data/quotes';
+import type { CharacterId, GameStatus, Piece } from '../types';
 
-const DUNE_CONFETTI_COLORS = ["#c4973b", "#e8b94a", "#d4722a"];
+const DUNE_CONFETTI_COLORS = ['#c4973b', '#e8b94a', '#d4722a'];
 
 export interface GameOverOverlayProps {
   gameStatus: GameStatus;
@@ -22,23 +22,19 @@ function getWinnerText(
 ): string {
   if (winner === null) return PLAYER_FACTION.drawTitle;
   if (isHvCpu) {
-    if (winner === "X") return PLAYER_FACTION.victoryTitle;
+    if (winner === 'X') return PLAYER_FACTION.victoryTitle;
     if (opponent) return getCpuFaction(opponent).victoryTitle;
-    return "Defeat";
+    return 'Defeat';
   }
   return `Player ${winner} Wins!`;
 }
 
-function getQuote(
-  winner: Piece | null,
-  opponent: CharacterId | null,
-  isHvCpu: boolean,
-): string {
+function getQuote(winner: Piece | null, opponent: CharacterId | null, isHvCpu: boolean): string {
   if (isHvCpu && opponent) {
     let outcome: GameOutcome;
-    if (winner === "X") outcome = "human_wins";
-    else if (winner === "O") outcome = "cpu_wins";
-    else outcome = "draw";
+    if (winner === 'X') outcome = 'human_wins';
+    else if (winner === 'O') outcome = 'cpu_wins';
+    else outcome = 'draw';
     return getCpuGameQuote(opponent, outcome);
   }
   return getHvhGameQuote(winner);
@@ -52,34 +48,37 @@ export function GameOverOverlay({
   onPlayAgain,
   onRematch,
 }: GameOverOverlayProps) {
-  if (gameStatus !== "won" && gameStatus !== "draw") return null;
+  if (gameStatus !== 'won' && gameStatus !== 'draw') return null;
 
   const winnerText = getWinnerText(winner, opponent, isHvCpu);
   const quote = getQuote(winner, opponent, isHvCpu);
-  const isDraw = gameStatus === "draw";
-  const isWin = gameStatus === "won";
+  const isDraw = gameStatus === 'draw';
+  const isWin = gameStatus === 'won';
 
   // Confetti fires on player wins only (HvH: any win, HvCPU: X wins)
-  const isPlayerWin = isWin && (!isHvCpu || winner === "X");
+  const isPlayerWin = isWin && (!isHvCpu || winner === 'X');
   const prefersReducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const showConfetti = isPlayerWin && !prefersReducedMotion;
 
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-[var(--z-modal)] animate-fade-in"
       style={{
-        backgroundColor: "rgba(26, 20, 9, 0.60)",
-        backdropFilter: isDraw ? "grayscale(0.5)" : undefined,
-        WebkitBackdropFilter: isDraw ? "grayscale(0.5)" : undefined,
+        backgroundColor: 'rgba(26, 20, 9, 0.60)',
+        backdropFilter: isDraw ? 'grayscale(0.5)' : undefined,
+        WebkitBackdropFilter: isDraw ? 'grayscale(0.5)' : undefined,
       }}
       role="dialog"
       aria-modal="true"
       aria-label="Game over"
     >
       {showConfetti && (
-        <div className="fixed inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+        <div
+          className="fixed inset-0 flex items-center justify-center pointer-events-none"
+          aria-hidden="true"
+        >
           <Confetti
             particleCount={100}
             colors={DUNE_CONFETTI_COLORS}
@@ -92,7 +91,7 @@ export function GameOverOverlay({
 
       <div className="bg-sand-medium rounded-[8px] p-[var(--space-8)] max-w-[400px] w-[90%] text-center animate-scale-in">
         <h2
-          className={`font-heading font-bold text-[2rem] leading-[1.1] text-gold-bright ${isWin ? "animate-victory-pulse" : ""}`}
+          className={`font-heading font-bold text-[2rem] leading-[1.1] text-gold-bright ${isWin ? 'animate-victory-pulse' : ''}`}
           aria-live="assertive"
         >
           {winnerText}

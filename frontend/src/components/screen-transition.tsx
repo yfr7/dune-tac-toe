@@ -47,17 +47,10 @@ export function ScreenTransition({ screenKey, children }: ScreenTransitionProps)
   }, [phase]);
 
   const animationClass =
-    phase === 'enter'
-      ? 'animate-screen-enter'
-      : phase === 'exit'
-        ? 'animate-screen-exit'
-        : '';
+    phase === 'enter' ? 'animate-screen-enter' : phase === 'exit' ? 'animate-screen-exit' : '';
 
   return (
-    <div
-      className={animationClass}
-      data-transition-phase={phase}
-    >
+    <div className={animationClass} data-transition-phase={phase}>
       {displayedChildren}
     </div>
   );

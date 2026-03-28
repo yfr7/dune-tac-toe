@@ -1,19 +1,19 @@
-import { cn } from "../lib/utils";
-import type { CharacterId, Difficulty } from "../types";
-import { CHARACTERS } from "../data/characters";
-import { CPU_FACTIONS } from "../data/faction-config";
-import { SpiderAlt } from "../assets/icons/SpiderAlt";
-import { AllSeeingEye } from "../assets/icons/AllSeeingEye";
-import { SandSnake } from "../assets/icons/SandSnake";
+import { AllSeeingEye } from '../assets/icons/AllSeeingEye';
+import { SandSnake } from '../assets/icons/SandSnake';
+import { SpiderAlt } from '../assets/icons/SpiderAlt';
+import { CHARACTERS } from '../data/characters';
+import { CPU_FACTIONS } from '../data/faction-config';
+import { cn } from '../lib/utils';
+import type { CharacterId, Difficulty } from '../types';
 
 export interface OpponentSelectProps {
   onSelectOpponent: (characterId: CharacterId) => void;
 }
 
 const BADGE_STYLES: Record<Difficulty, string> = {
-  hard: "bg-difficulty-hard text-bone",
-  medium: "bg-difficulty-medium text-sand-dark",
-  easy: "bg-difficulty-easy text-sand-dark",
+  hard: 'bg-difficulty-hard text-bone',
+  medium: 'bg-difficulty-medium text-sand-dark',
+  easy: 'bg-difficulty-easy text-sand-dark',
 };
 
 const CARD_ICON: Record<CharacterId, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -29,8 +29,8 @@ function DifficultyDots({ count }: { count: number }) {
         <span
           key={i}
           className={cn(
-            "inline-block w-[8px] h-[8px] rounded-full",
-            i < count ? "bg-spice-orange" : "bg-sand-light",
+            'inline-block w-[8px] h-[8px] rounded-full',
+            i < count ? 'bg-spice-orange' : 'bg-sand-light',
           )}
           aria-hidden="true"
         />
@@ -57,24 +57,24 @@ export function OpponentSelect({ onSelectOpponent }: OpponentSelectProps) {
               type="button"
               onClick={() => onSelectOpponent(character.id)}
               className={cn(
-                "min-w-[180px] max-w-[220px] flex-1",
-                "flex flex-col items-center text-center",
-                "p-[var(--space-6)] bg-sand-medium rounded-[8px]",
-                "cursor-pointer",
-                "transition-all duration-[var(--duration-fast)] ease-out",
-                "hover:-translate-y-[4px]",
-                "focus-visible:outline-2 focus-visible:outline-gold-bright focus-visible:outline-offset-2",
+                'min-w-[180px] max-w-[220px] flex-1',
+                'flex flex-col items-center text-center',
+                'p-[var(--space-6)] bg-sand-medium rounded-[8px]',
+                'cursor-pointer',
+                'transition-all duration-[var(--duration-fast)] ease-out',
+                'hover:-translate-y-[4px]',
+                'focus-visible:outline-2 focus-visible:outline-gold-bright focus-visible:outline-offset-2',
               )}
               style={{
-                borderWidth: "1px",
-                borderStyle: "solid",
+                borderWidth: '1px',
+                borderStyle: 'solid',
                 borderColor: faction.accentColor,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 4px 16px ${faction.accentColor}40`;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "";
+                e.currentTarget.style.boxShadow = '';
               }}
             >
               <Icon
@@ -88,8 +88,8 @@ export function OpponentSelect({ onSelectOpponent }: OpponentSelectProps) {
 
               <span
                 className={cn(
-                  "mt-[var(--space-2)] px-[var(--space-2)] py-[var(--space-1)]",
-                  "font-sans font-medium text-[0.75rem] tracking-[0.05em] uppercase rounded-[4px]",
+                  'mt-[var(--space-2)] px-[var(--space-2)] py-[var(--space-1)]',
+                  'font-sans font-medium text-[0.75rem] tracking-[0.05em] uppercase rounded-[4px]',
                   BADGE_STYLES[character.difficulty],
                 )}
               >

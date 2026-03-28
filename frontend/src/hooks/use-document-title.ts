@@ -41,9 +41,7 @@ function getTitle(options: UseDocumentTitleOptions): string {
         return 'Draw \u2014 Dune Tac Toe';
       }
       if (isHvCpu) {
-        return winner === 'X'
-          ? 'Victory! \u2014 Dune Tac Toe'
-          : 'Defeat \u2014 Dune Tac Toe';
+        return winner === 'X' ? 'Victory! \u2014 Dune Tac Toe' : 'Defeat \u2014 Dune Tac Toe';
       }
       return `Player ${winner} Wins! \u2014 Dune Tac Toe`;
     }
@@ -58,6 +56,6 @@ export function useDocumentTitle(options: UseDocumentTitleOptions): void {
   }, [title]);
 }
 
+export type { UseDocumentTitleOptions };
 // Export for testing
 export { getTitle };
-export type { UseDocumentTitleOptions };

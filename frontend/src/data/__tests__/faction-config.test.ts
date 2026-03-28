@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  CPU_FACTIONS,
-  PLAYER_FACTION,
-  getCpuFaction,
-} from '../faction-config';
+import { CPU_FACTIONS, getCpuFaction, PLAYER_FACTION } from '../faction-config';
 
 describe('faction-config', () => {
   it('defines player faction with Atreides identity', () => {
@@ -15,11 +11,7 @@ describe('faction-config', () => {
   });
 
   it('defines all three CPU factions', () => {
-    expect(Object.keys(CPU_FACTIONS)).toEqual([
-      'baron_harkonnen',
-      'reverend_mother',
-      'stilgar',
-    ]);
+    expect(Object.keys(CPU_FACTIONS)).toEqual(['baron_harkonnen', 'reverend_mother', 'stilgar']);
   });
 
   it('gives each CPU faction a unique accent color', () => {
@@ -60,14 +52,8 @@ describe('faction-config', () => {
   });
 
   it('getCpuFaction returns the correct faction', () => {
-    expect(getCpuFaction('baron_harkonnen').turnText).toBe(
-      'Baron Harkonnen schemes...',
-    );
-    expect(getCpuFaction('reverend_mother').turnText).toBe(
-      'The Reverend Mother contemplates...',
-    );
-    expect(getCpuFaction('stilgar').turnText).toBe(
-      'Stilgar reads the sands...',
-    );
+    expect(getCpuFaction('baron_harkonnen').turnText).toBe('Baron Harkonnen schemes...');
+    expect(getCpuFaction('reverend_mother').turnText).toBe('The Reverend Mother contemplates...');
+    expect(getCpuFaction('stilgar').turnText).toBe('Stilgar reads the sands...');
   });
 });

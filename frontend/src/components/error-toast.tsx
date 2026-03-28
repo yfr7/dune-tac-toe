@@ -33,9 +33,7 @@ export function ErrorToast({ message, onRetry, onDismiss }: ErrorToastProps) {
         'max-w-[480px] w-[calc(100%-var(--space-8))]',
       )}
     >
-      <p className="flex-1 font-sans text-[0.875rem] leading-[1.4]">
-        {message}
-      </p>
+      <p className="flex-1 font-sans text-[0.875rem] leading-[1.4]">{message}</p>
       <button
         type="button"
         onClick={onRetry}

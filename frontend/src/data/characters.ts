@@ -26,8 +26,7 @@ export const CHARACTERS: readonly Character[] = [
     name: 'Stilgar',
     difficulty: 'easy',
     difficultyRank: 1,
-    description:
-      'Earnest and confused. Applies Fremen desert wisdom to game strategy — poorly.',
+    description: 'Earnest and confused. Applies Fremen desert wisdom to game strategy — poorly.',
   },
 ] as const;
 
