@@ -50,8 +50,8 @@ describe("App - Opponent Selection Flow (T017)", () => {
     expect(
       screen.queryByRole("heading", { name: "Choose Your Opponent" }),
     ).not.toBeInTheDocument();
-    // Turn indicator should show X's turn
-    expect(screen.getByText("Player X's turn")).toBeInTheDocument();
+    // Turn indicator should show player's faction turn text
+    expect(screen.getByText("House Atreides moves")).toBeInTheDocument();
   });
 
   it("HvH mode still works - bypasses opponent selection", async () => {

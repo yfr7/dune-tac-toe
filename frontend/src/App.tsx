@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useGame } from './hooks/use-game';
+import { AttributionFooter } from './components/attribution-footer';
+import { CommentaryBox } from './components/commentary-box';
+import { ErrorToast } from './components/error-toast';
+import { GameBoard } from './components/game-board';
+import { GameOverOverlay } from './components/game-over-overlay';
+import { OpponentSelect } from './components/opponent-select';
+import { TitleScreen } from './components/title-screen';
+import { TurnIndicator } from './components/turn-indicator';
+import { getCharacter } from './data/characters';
 import { useCpuMove } from './hooks/use-cpu-move';
 import { useDocumentTitle } from './hooks/use-document-title';
-import { TitleScreen } from './components/title-screen';
-import { OpponentSelect } from './components/opponent-select';
-import { GameBoard } from './components/game-board';
-import { TurnIndicator } from './components/turn-indicator';
-import { CommentaryBox } from './components/commentary-box';
-import { GameOverOverlay } from './components/game-over-overlay';
-import { ErrorToast } from './components/error-toast';
-import { AttributionFooter } from './components/attribution-footer';
-import { getCharacter } from './data/characters';
+import { useGame } from './hooks/use-game';
 import type { CharacterId, GameMode } from './types';
 
 type Screen = 'title' | 'opponent-select' | 'game' | 'game-over';
@@ -29,8 +29,7 @@ function App() {
   const currentScreen: Screen = (() => {
     if (showOpponentSelect) return 'opponent-select';
     if (game.gameStatus === 'idle') return 'title';
-    if (game.gameStatus === 'won' || game.gameStatus === 'draw')
-      return 'game-over';
+    if (game.gameStatus === 'won' || game.gameStatus === 'draw') return 'game-over';
     return 'game';
   })();
 
@@ -65,10 +64,7 @@ function App() {
     processingCpuMove.current = true;
     setCpuThinking(true);
 
-    const result = await cpuMove.requestMove(
-      game.board,
-      game.selectedOpponent,
-    );
+    const result = await cpuMove.requestMove(game.board, game.selectedOpponent);
 
     if (result) {
       game.placeCpuMove(result.move.row, result.move.col);
@@ -111,9 +107,7 @@ function App() {
     game.placeMove(row, col);
   };
 
-  const character = game.selectedOpponent
-    ? getCharacter(game.selectedOpponent)
-    : null;
+  const character = game.selectedOpponent ? getCharacter(game.selectedOpponent) : null;
 
   useDocumentTitle({
     screen: currentScreen,
@@ -127,9 +121,7 @@ function App() {
 
   return (
     <>
-      {currentScreen === 'title' && (
-        <TitleScreen onSelectMode={handleSelectMode} />
-      )}
+      {currentScreen === 'title' && <TitleScreen onSelectMode={handleSelectMode} />}
 
       {currentScreen === 'opponent-select' && (
         <OpponentSelect onSelectOpponent={handleSelectOpponent} />
@@ -141,6 +133,8 @@ function App() {
             currentTurn={game.currentTurn}
             cpuThinking={cpuThinking}
             characterName={character?.name}
+            gameMode={game.gameMode}
+            characterId={game.selectedOpponent ?? undefined}
           />
           <GameBoard
             board={game.board}
@@ -169,11 +163,7 @@ function App() {
       />
 
       {showErrorToast && (
-        <ErrorToast
-          message={cpuMove.error!}
-          onRetry={handleRetry}
-          onDismiss={handleDismissError}
-        />
+        <ErrorToast message={cpuMove.error!} onRetry={handleRetry} onDismiss={handleDismissError} />
       )}
 
       <AttributionFooter />
