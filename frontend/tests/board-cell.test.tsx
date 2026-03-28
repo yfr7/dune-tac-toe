@@ -45,21 +45,22 @@ describe('BoardCell', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows X piece marker when cellValue is X', () => {
-    render(<BoardCell {...defaultProps} cellValue="X" />);
-    expect(screen.getByText('X')).toBeInTheDocument();
+  it('shows PlainDagger SVG icon when cellValue is X', () => {
+    const { container } = render(<BoardCell {...defaultProps} cellValue="X" />);
+    const svg = container.querySelector('svg[aria-hidden="true"]');
+    expect(svg).toBeInTheDocument();
   });
 
-  it('shows O piece marker when cellValue is O', () => {
-    render(<BoardCell {...defaultProps} cellValue="O" />);
-    expect(screen.getByText('O')).toBeInTheDocument();
+  it('shows SeaSerpent SVG icon when cellValue is O', () => {
+    const { container } = render(<BoardCell {...defaultProps} cellValue="O" />);
+    const svg = container.querySelector('svg[aria-hidden="true"]');
+    expect(svg).toBeInTheDocument();
   });
 
   it('does not show piece marker when empty', () => {
-    render(<BoardCell {...defaultProps} />);
-    // Only the location name text should be present, not X or O
-    expect(screen.queryByText('X')).not.toBeInTheDocument();
-    expect(screen.queryByText('O')).not.toBeInTheDocument();
+    const { container } = render(<BoardCell {...defaultProps} />);
+    const svg = container.querySelector('svg[aria-hidden="true"]');
+    expect(svg).not.toBeInTheDocument();
   });
 
   it('calls onClick when clicked', async () => {
@@ -98,19 +99,21 @@ describe('BoardCell', () => {
   });
 
   it('applies piece placement animation class on placed pieces', () => {
-    render(<BoardCell {...defaultProps} cellValue="X" />);
-    const pieceElement = screen.getByText('X');
-    expect(pieceElement.className).toContain('animate-piece-place');
+    const { container } = render(<BoardCell {...defaultProps} cellValue="X" />);
+    const pieceWrapper = container.querySelector('[aria-hidden="true"]')?.closest('span');
+    expect(pieceWrapper?.className).toContain('animate-piece-place');
   });
 
-  it('X piece uses bone color and O piece uses gold color', () => {
-    const { rerender } = render(
+  it('X piece uses atreides-blue color and O piece uses gold color', () => {
+    const { container, rerender } = render(
       <BoardCell {...defaultProps} cellValue="X" />,
     );
-    expect(screen.getByText('X').className).toContain('text-bone');
+    const xWrapper = container.querySelector('svg[aria-hidden="true"]')?.closest('span[aria-hidden="true"]');
+    expect(xWrapper?.className).toContain('text-atreides-blue');
 
     rerender(<BoardCell {...defaultProps} cellValue="O" />);
-    expect(screen.getByText('O').className).toContain('text-gold');
+    const oWrapper = container.querySelector('svg[aria-hidden="true"]')?.closest('span[aria-hidden="true"]');
+    expect(oWrapper?.className).toContain('text-gold');
   });
 
   it('dims location name when piece is placed', () => {
@@ -166,6 +169,64 @@ describe('BoardCell', () => {
       render(<BoardCell {...defaultProps} disabled />);
       const btn = screen.getByRole('button');
       expect(btn.style.cursor).toBe('');
+    });
+  });
+
+  describe('T012: Themed SVG icons and ripple animation', () => {
+    it('renders PlainDagger icon for X pieces', () => {
+      const { container } = render(<BoardCell {...defaultProps} cellValue="X" />);
+      // PlainDagger has a specific path starting with M43.53
+      const path = container.querySelector('svg path');
+      expect(path?.getAttribute('d')).toContain('M43.53');
+    });
+
+    it('renders SeaSerpent icon for O pieces', () => {
+      const { container } = render(<BoardCell {...defaultProps} cellValue="O" />);
+      // SeaSerpent has a specific path starting with m220
+      const path = container.querySelector('svg path');
+      expect(path?.getAttribute('d')).toContain('m220');
+    });
+
+    it('uses currentColor for icon fill (themed via parent text color)', () => {
+      const { container } = render(<BoardCell {...defaultProps} cellValue="X" />);
+      const path = container.querySelector('svg path');
+      expect(path).toHaveAttribute('fill', 'currentColor');
+    });
+
+    it('icons are 2rem size', () => {
+      const { container } = render(<BoardCell {...defaultProps} cellValue="X" />);
+      const svg = container.querySelector('svg');
+      expect(svg?.classList.contains('w-[2rem]')).toBe(true);
+      expect(svg?.classList.contains('h-[2rem]')).toBe(true);
+    });
+
+    it('preserves cell aria-labels regardless of icon change', () => {
+      render(<BoardCell {...defaultProps} cellValue="X" />);
+      expect(screen.getByRole('button', { name: 'Arrakeen - X' })).toBeInTheDocument();
+    });
+
+    it('renders ripple-expand animation element on placed pieces', () => {
+      const { container } = render(<BoardCell {...defaultProps} cellValue="X" />);
+      const ripple = container.querySelector('.animate-ripple-expand');
+      expect(ripple).toBeInTheDocument();
+    });
+
+    it('ripple uses atreides-blue border for X pieces', () => {
+      const { container } = render(<BoardCell {...defaultProps} cellValue="X" />);
+      const ripple = container.querySelector('.animate-ripple-expand') as HTMLElement;
+      expect(ripple.style.borderColor).toBe('var(--atreides-blue)');
+    });
+
+    it('ripple uses gold border for O pieces', () => {
+      const { container } = render(<BoardCell {...defaultProps} cellValue="O" />);
+      const ripple = container.querySelector('.animate-ripple-expand') as HTMLElement;
+      expect(ripple.style.borderColor).toBe('var(--gold)');
+    });
+
+    it('no ripple when cell is empty', () => {
+      const { container } = render(<BoardCell {...defaultProps} />);
+      const ripple = container.querySelector('.animate-ripple-expand');
+      expect(ripple).not.toBeInTheDocument();
     });
   });
 

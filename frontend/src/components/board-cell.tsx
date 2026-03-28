@@ -1,4 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
+import { PlainDagger } from '../assets/icons/PlainDagger';
+import { SeaSerpent } from '../assets/icons/SeaSerpent';
 import { cn } from '../lib/utils';
 import type { CellValue } from '../types';
 
@@ -87,13 +89,24 @@ export function BoardCell({
       {cellValue !== null && (
         <span
           className={cn(
-            'text-[2.5rem] font-bold leading-none mt-1 select-none',
+            'relative leading-none mt-1 select-none',
             'animate-piece-place',
-            cellValue === 'X' ? 'text-bone' : 'text-gold',
+            cellValue === 'X' ? 'text-atreides-blue' : 'text-gold',
           )}
           aria-hidden="true"
         >
-          {cellValue}
+          {cellValue === 'X' ? (
+            <PlainDagger className="w-[2rem] h-[2rem]" />
+          ) : (
+            <SeaSerpent className="w-[2rem] h-[2rem]" />
+          )}
+          {/* Radial ripple on placement */}
+          <span
+            className="absolute inset-0 rounded-full border-2 animate-ripple-expand pointer-events-none"
+            style={{
+              borderColor: cellValue === 'X' ? 'var(--atreides-blue)' : 'var(--gold)',
+            }}
+          />
         </span>
       )}
     </button>
