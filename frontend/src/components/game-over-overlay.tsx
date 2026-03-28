@@ -1,7 +1,10 @@
+import { Confetti } from "@neoconfetti/react";
 import { getCpuFaction, PLAYER_FACTION } from "../data/faction-config";
 import { getCpuGameQuote, getHvhGameQuote } from "../data/quotes";
 import type { GameOutcome } from "../data/quotes";
 import type { CharacterId, GameStatus, Piece } from "../types";
+
+const DUNE_CONFETTI_COLORS = ["#c4973b", "#e8b94a", "#d4722a"];
 
 export interface GameOverOverlayProps {
   gameStatus: GameStatus;
@@ -56,6 +59,13 @@ export function GameOverOverlay({
   const isDraw = gameStatus === "draw";
   const isWin = gameStatus === "won";
 
+  // Confetti fires on player wins only (HvH: any win, HvCPU: X wins)
+  const isPlayerWin = isWin && (!isHvCpu || winner === "X");
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const showConfetti = isPlayerWin && !prefersReducedMotion;
+
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-[var(--z-modal)] animate-fade-in"
@@ -68,6 +78,18 @@ export function GameOverOverlay({
       aria-modal="true"
       aria-label="Game over"
     >
+      {showConfetti && (
+        <div className="fixed inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+          <Confetti
+            particleCount={100}
+            colors={DUNE_CONFETTI_COLORS}
+            force={0.6}
+            duration={3500}
+            destroyAfterDone
+          />
+        </div>
+      )}
+
       <div className="bg-sand-medium rounded-[8px] p-[var(--space-8)] max-w-[400px] w-[90%] text-center animate-scale-in">
         <h2
           className={`font-heading font-bold text-[2rem] leading-[1.1] text-gold-bright ${isWin ? "animate-victory-pulse" : ""}`}

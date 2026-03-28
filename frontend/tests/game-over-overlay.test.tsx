@@ -1,7 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GameOverOverlay } from "../src/components/game-over-overlay";
+
+// Mock @neoconfetti/react to avoid DOM side-effects in tests
+vi.mock("@neoconfetti/react", () => ({
+  Confetti: (props: Record<string, unknown>) => (
+    <div data-testid="confetti" data-colors={JSON.stringify(props.colors)} />
+  ),
+}));
 
 describe("GameOverOverlay", () => {
   it("renders nothing when game is still playing", () => {
@@ -209,11 +216,22 @@ describe("GameOverOverlay", () => {
     expect(dialog).toHaveAttribute("aria-label", "Game over");
   });
 
-  describe("US6: visual polish (T022)", () => {
+  describe("US6: visual polish (T022-T023)", () => {
     const defaultProps = {
       onPlayAgain: () => {},
       onRematch: () => {},
     };
+
+    // Mock matchMedia for confetti prefers-reduced-motion tests
+    const originalMatchMedia = window.matchMedia;
+
+    beforeEach(() => {
+      window.matchMedia = vi.fn().mockReturnValue({ matches: false });
+    });
+
+    afterEach(() => {
+      window.matchMedia = originalMatchMedia;
+    });
 
     it("applies victory-pulse animation on win title", () => {
       render(
@@ -353,6 +371,87 @@ describe("GameOverOverlay", () => {
         />,
       );
       expect(screen.getByText("The Bene Gesserit See All!")).toBeInTheDocument();
+    });
+
+    it("fires confetti on HvH player win", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      expect(screen.getByTestId("confetti")).toBeInTheDocument();
+    });
+
+    it("fires confetti on HvCPU human (X) win", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent="baron_harkonnen"
+          isHvCpu={true}
+        />,
+      );
+      expect(screen.getByTestId("confetti")).toBeInTheDocument();
+    });
+
+    it("does NOT fire confetti on CPU win", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="O"
+          opponent="baron_harkonnen"
+          isHvCpu={true}
+        />,
+      );
+      expect(screen.queryByTestId("confetti")).not.toBeInTheDocument();
+    });
+
+    it("does NOT fire confetti on draw", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="draw"
+          winner={null}
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      expect(screen.queryByTestId("confetti")).not.toBeInTheDocument();
+    });
+
+    it("does NOT fire confetti when prefers-reduced-motion is enabled", () => {
+      vi.mocked(window.matchMedia).mockReturnValue({ matches: true } as MediaQueryList);
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      expect(screen.queryByTestId("confetti")).not.toBeInTheDocument();
+    });
+
+    it("uses Dune palette colors for confetti", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const confetti = screen.getByTestId("confetti");
+      const colors = JSON.parse(confetti.getAttribute("data-colors")!);
+      expect(colors).toEqual(["#c4973b", "#e8b94a", "#d4722a"]);
     });
   });
 
