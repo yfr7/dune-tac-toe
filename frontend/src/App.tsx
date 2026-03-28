@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AttributionFooter } from './components/attribution-footer';
+import { CinematicInterstitial } from './components/cinematic-interstitial';
 import { CommentaryBox } from './components/commentary-box';
 import { ErrorToast } from './components/error-toast';
 import { GameBoard } from './components/game-board';
@@ -17,12 +18,14 @@ import { useDocumentTitle } from './hooks/use-document-title';
 import { useGame } from './hooks/use-game';
 import type { CharacterId, GameMode } from './types';
 
-type Screen = 'title' | 'opponent-select' | 'game' | 'game-over';
+type Screen = 'title' | 'opponent-select' | 'interstitial' | 'game' | 'game-over';
 
 function App() {
   const game = useGame();
   const cpuMove = useCpuMove();
   const [showOpponentSelect, setShowOpponentSelect] = useState(false);
+  const [showInterstitial, setShowInterstitial] = useState(false);
+  const [pendingOpponent, setPendingOpponent] = useState<CharacterId | null>(null);
   const [cpuThinking, setCpuThinking] = useState(false);
   const [errorDismissed, setErrorDismissed] = useState(false);
   const processingCpuMove = useRef(false);
@@ -31,6 +34,7 @@ function App() {
 
   // Derive current screen from game state
   const currentScreen: Screen = (() => {
+    if (showInterstitial) return 'interstitial';
     if (showOpponentSelect) return 'opponent-select';
     if (game.gameStatus === 'idle') return 'title';
     if (game.gameStatus === 'won' || game.gameStatus === 'draw') return 'game-over';
@@ -47,8 +51,17 @@ function App() {
 
   const handleSelectOpponent = (characterId: CharacterId) => {
     setShowOpponentSelect(false);
-    game.startGame('human-vs-cpu', characterId);
+    setPendingOpponent(characterId);
+    setShowInterstitial(true);
   };
+
+  const handleInterstitialComplete = useCallback(() => {
+    if (pendingOpponent) {
+      game.startGame('human-vs-cpu', pendingOpponent);
+    }
+    setShowInterstitial(false);
+    setPendingOpponent(null);
+  }, [pendingOpponent, game.startGame]);
 
   const handlePlayAgain = () => {
     setCpuThinking(false);
@@ -135,6 +148,13 @@ function App() {
 
         {currentScreen === 'opponent-select' && (
           <OpponentSelect onSelectOpponent={handleSelectOpponent} />
+        )}
+
+        {currentScreen === 'interstitial' && pendingOpponent && (
+          <CinematicInterstitial
+            characterId={pendingOpponent}
+            onComplete={handleInterstitialComplete}
+          />
         )}
 
         {(currentScreen === 'game' || currentScreen === 'game-over') && (
