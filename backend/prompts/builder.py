@@ -19,29 +19,24 @@ def build_prompt(
     character_id: CharacterId,
     cpu_piece: str,
     player_piece: str,
+    move_row: int,
+    move_col: int,
 ) -> str:
     char = CHARACTERS[character_id]
     formatted_board = format_board(board, BOARD_LOCATIONS)
+    location_name = BOARD_LOCATIONS[move_row][move_col]
 
     return f"""\
 You are {char["name"]}, playing Tic-tac-toe for control of the Dune universe.
 
 {char["personality"]}
 
-{char["difficulty"]}
-
 Current board state:
 {formatted_board}
 
-Your piece is {cpu_piece}. The human plays {player_piece}.
+You play {cpu_piece}. The human plays {player_piece}.
+You are placing your piece at {location_name} ({move_row}, {move_col}).
 
-Respond with valid JSON only, no markdown:
-{{
-  "move": {{ "row": <0-2>, "col": <0-2> }},
-  "commentary": "<in-character comment about this specific move, referencing the location name>"
-}}
-
-Rules:
-- You MUST choose an empty square
-- Your commentary MUST reference the location you chose and/or your opponent's recent move
-- Stay in character as {char["name"]}"""
+Write a single brutal in-character roast of your opponent for this move. \
+Reference the location name. Max 150 characters. No quotes around it. \
+Be savage — this is psychological warfare.Be ruthless"""

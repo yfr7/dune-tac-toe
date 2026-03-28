@@ -1,65 +1,55 @@
-import json
 import logging
-import random
 
-from config import settings
-from models import MoveCoordinates
+from models import LLMCommentary
 from prompts import FALLBACK_COMMENTARY, build_prompt
 
 from .client import client
 from .state import GraphState
+from .strategy import compute_move_for_difficulty
 
 logger = logging.getLogger(__name__)
 
 
+def compute_move(state: GraphState) -> dict:
+    move = compute_move_for_difficulty(
+        board=state["board"],
+        difficulty=state["difficulty"],
+        cpu_piece=state["cpu_piece"],
+        player_piece=state["player_piece"],
+    )
+    return {"move": move}
+
+
 def call_llm(state: GraphState) -> dict:
+    from config import settings
+
+    move = state["move"]
     prompt = build_prompt(
         board=state["board"],
         character_id=state["character"],
         cpu_piece=state["cpu_piece"],
         player_piece=state["player_piece"],
+        move_row=move.row,
+        move_col=move.col,
     )
 
-    response = client.chat.completions.create(
-        model=settings.openai_model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.8,
-    )
-
-    raw = response.choices[0].message.content or ""
-    return {"raw_response": raw}
-
-
-def parse_response(state: GraphState) -> dict:
-    raw = state["raw_response"]
     try:
-        data = json.loads(raw)
-        move = MoveCoordinates(row=data["move"]["row"], col=data["move"]["col"])
-        commentary = data.get("commentary", FALLBACK_COMMENTARY)
-    except (json.JSONDecodeError, KeyError, ValueError) as e:
-        logger.warning("Failed to parse LLM response: %s — %s", e, raw)
-        return {"move": None, "commentary": FALLBACK_COMMENTARY}
+        response = client.beta.chat.completions.parse(
+            model=settings.openai_model,
+            messages=[{"role": "user", "content": prompt}],
+            response_format=LLMCommentary,
+            temperature=0.8,
+        )
+        parsed = response.choices[0].message.parsed
+        if parsed and parsed.commentary:
+            return {"commentary": parsed.commentary}
+    except Exception as e:
+        logger.warning("LLM call failed: %s", e)
 
-    # Validate the move is on an empty square
-    board = state["board"]
-    if board[move.row][move.col] is not None:
-        logger.warning("LLM chose occupied square (%d, %d)", move.row, move.col)
-        return {"move": None, "commentary": FALLBACK_COMMENTARY}
-
-    return {"move": move, "commentary": commentary}
+    return {"commentary": ""}
 
 
-def fallback_move(state: GraphState) -> dict:
-    if state["move"] is not None:
+def fallback_commentary(state: GraphState) -> dict:
+    if state.get("commentary"):
         return {}
-
-    board = state["board"]
-    empty = [(r, c) for r in range(3) for c in range(3) if board[r][c] is None]
-
-    if not empty:
-        logger.error("No empty squares available for fallback move")
-        return {}
-
-    r, c = random.choice(empty)
-    logger.info("Fallback move selected: (%d, %d)", r, c)
-    return {"move": MoveCoordinates(row=r, col=c)}
+    return {"commentary": FALLBACK_COMMENTARY}

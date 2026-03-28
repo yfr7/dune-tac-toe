@@ -28,5 +28,9 @@ class MoveResponse(BaseModel):
     commentary: str
 
 
+class LLMCommentary(BaseModel):
+    commentary: str = Field(..., max_length=150)
+
+
 class HealthResponse(BaseModel):
     status: str = "ok"
