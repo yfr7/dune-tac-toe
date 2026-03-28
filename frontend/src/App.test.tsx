@@ -15,8 +15,10 @@ describe('App screen routing', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
-    // Game board should appear
-    expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    // Game board should appear (wait for screen transition)
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
     // Turn indicator should show
     expect(screen.getByText("Player 1's turn")).toBeInTheDocument();
     // Title screen should be gone
@@ -27,6 +29,9 @@ describe('App screen routing', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
 
     // Play a quick game: X wins with top row (0,0), (0,1), (0,2)
     // X plays (0,0)
@@ -51,6 +56,9 @@ describe('App screen routing', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
 
     // X wins top row
     await user.click(screen.getByRole('button', { name: /arrakeen - empty/i }));
@@ -62,14 +70,19 @@ describe('App screen routing', () => {
     // Click Play Again
     await user.click(screen.getByRole('button', { name: /play again/i }));
 
-    // Should be back on title screen
-    expect(screen.getByRole('heading', { name: /dune tac toe/i })).toBeInTheDocument();
+    // Should be back on title screen (wait for screen transition)
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /dune tac toe/i })).toBeInTheDocument();
+    });
   });
 
   it('starts a new game when Rematch is clicked', async () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
 
     // X wins top row
     await user.click(screen.getByRole('button', { name: /arrakeen - empty/i }));
@@ -92,6 +105,9 @@ describe('App screen routing', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
 
     // Play to a draw:
     // X O X    (0,0)X (0,1)O (0,2)X
@@ -115,6 +131,9 @@ describe('App screen routing', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
 
     expect(screen.getByText("Player 1's turn")).toBeInTheDocument();
 
@@ -129,6 +148,9 @@ describe('App screen routing', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
 
     // O wins left column: O at (0,0), (1,0), (2,0) won't work since X goes first
     // Instead: X plays non-winning, O wins column 1
@@ -147,8 +169,10 @@ describe('App screen routing', () => {
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs cpu/i }));
 
-    // Opponent selection screen should appear
-    expect(screen.getByRole('heading', { name: /choose your opponent/i })).toBeInTheDocument();
+    // Opponent selection screen should appear (wait for screen transition)
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /choose your opponent/i })).toBeInTheDocument();
+    });
     // All three characters should be visible
     expect(screen.getByText('Baron Harkonnen')).toBeInTheDocument();
     expect(screen.getByText('Reverend Mother')).toBeInTheDocument();
@@ -161,11 +185,16 @@ describe('App screen routing', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs cpu/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /choose your opponent/i })).toBeInTheDocument();
+    });
     // Select Baron Harkonnen
     await user.click(screen.getByText('Baron Harkonnen'));
 
-    // Game board should appear
-    expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    // Game board should appear (wait for screen transition)
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
     expect(screen.getByText('House Atreides moves')).toBeInTheDocument();
     // Opponent selection should be gone
     expect(
@@ -199,7 +228,13 @@ describe('HvCPU flow', () => {
   async function startCpuGame(user: ReturnType<typeof userEvent.setup>) {
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs cpu/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /choose your opponent/i })).toBeInTheDocument();
+    });
     await user.click(screen.getByText('Baron Harkonnen'));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
   }
 
   it('triggers CPU move after human places a piece', async () => {

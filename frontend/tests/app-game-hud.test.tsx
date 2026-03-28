@@ -28,7 +28,13 @@ describe('App game HUD wiring (T026)', () => {
   async function startCpuGame(user: ReturnType<typeof userEvent.setup>) {
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs cpu/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /choose your opponent/i })).toBeInTheDocument();
+    });
     await user.click(screen.getByText('Baron Harkonnen'));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
   }
 
   it('shows opponent indicator in HvCPU game', async () => {
@@ -41,6 +47,9 @@ describe('App game HUD wiring (T026)', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
     expect(screen.queryByLabelText(/Opponent:/)).not.toBeInTheDocument();
   });
 
@@ -54,6 +63,9 @@ describe('App game HUD wiring (T026)', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: /human vs human/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('group', { name: /game board/i })).toBeInTheDocument();
+    });
     expect(screen.queryByLabelText(/Score:/)).not.toBeInTheDocument();
   });
 

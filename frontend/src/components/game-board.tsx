@@ -1,6 +1,7 @@
 import { BOARD_LOCATIONS } from '../data/locations';
 import type { Board, CellValue } from '../types';
 import { BoardCell } from './board-cell';
+import { WinningLine } from './winning-line';
 
 export interface GameBoardProps {
   board: Board;
@@ -32,7 +33,7 @@ export function GameBoard({
         boxShadow:
           'inset 0 2px 4px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3), 0 0 20px rgba(196,151,59,0.05), inset 0 0 4px rgba(231,155,7,0.15)',
       }}
-      className={`grid grid-cols-3 gap-[2px] max-w-[480px] w-full mx-auto bg-sand-light rounded-[4px] p-[var(--space-4)] transition-opacity duration-[var(--duration-fast)] ${thinkingStyles}`}
+      className={`relative grid grid-cols-3 gap-[2px] max-w-[480px] w-full mx-auto bg-sand-light rounded-[4px] p-[var(--space-4)] transition-opacity duration-[var(--duration-fast)] ${thinkingStyles}`}
     >
       {board.map((row: CellValue[], rowIndex: number) =>
         row.map((cellValue: CellValue, colIndex: number) => (
@@ -46,6 +47,7 @@ export function GameBoard({
           />
         )),
       )}
+      {winningLine && <WinningLine winningLine={winningLine} />}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { MatchScore } from './components/match-score';
 import { OpponentIndicator } from './components/opponent-indicator';
 import { OpponentSelect } from './components/opponent-select';
 import { SandParticles } from './components/sand-particles';
+import { ScreenTransition } from './components/screen-transition';
 import { TitleScreen } from './components/title-screen';
 import { TurnIndicator } from './components/turn-indicator';
 import { getCharacter } from './data/characters';
@@ -122,52 +123,57 @@ function App() {
     characterName: character?.name ?? null,
   });
 
+  // Group game and game-over under one key so the board stays visible through the overlay
+  const transitionKey = currentScreen === 'game-over' ? 'game' : currentScreen;
+
   return (
     <>
       {(currentScreen === 'title' || currentScreen === 'game-over') && <SandParticles />}
 
-      {currentScreen === 'title' && <TitleScreen onSelectMode={handleSelectMode} />}
+      <ScreenTransition screenKey={transitionKey}>
+        {currentScreen === 'title' && <TitleScreen onSelectMode={handleSelectMode} />}
 
-      {currentScreen === 'opponent-select' && (
-        <OpponentSelect onSelectOpponent={handleSelectOpponent} />
-      )}
+        {currentScreen === 'opponent-select' && (
+          <OpponentSelect onSelectOpponent={handleSelectOpponent} />
+        )}
 
-      {(currentScreen === 'game' || currentScreen === 'game-over') && (
-        <div className="flex flex-col items-center flex-1 pt-[var(--space-12)] px-[var(--space-4)]">
-          {isHvCpu && character && (
-            <OpponentIndicator
-              characterId={character.id}
-              characterName={character.name}
-              difficulty={character.difficulty}
-              isCpuTurn={game.currentTurn === 'O' && game.gameStatus === 'playing'}
+        {(currentScreen === 'game' || currentScreen === 'game-over') && (
+          <div className="flex flex-col items-center flex-1 pt-[var(--space-12)] px-[var(--space-4)]">
+            {isHvCpu && character && (
+              <OpponentIndicator
+                characterId={character.id}
+                characterName={character.name}
+                difficulty={character.difficulty}
+                isCpuTurn={game.currentTurn === 'O' && game.gameStatus === 'playing'}
+              />
+            )}
+            <TurnIndicator
+              currentTurn={game.currentTurn}
+              cpuThinking={cpuThinking}
+              characterName={character?.name}
+              gameMode={game.gameMode}
+              characterId={game.selectedOpponent ?? undefined}
             />
-          )}
-          <TurnIndicator
-            currentTurn={game.currentTurn}
-            cpuThinking={cpuThinking}
-            characterName={character?.name}
-            gameMode={game.gameMode}
-            characterId={game.selectedOpponent ?? undefined}
-          />
-          {isHvCpu && character && (
-            <MatchScore score={game.matchScore} characterName={character.name} />
-          )}
-          <GameBoard
-            board={game.board}
-            disabled={game.gameStatus !== 'playing' || cpuThinking}
-            cpuThinking={cpuThinking}
-            winningLine={game.winningLine}
-            onCellClick={handleCellClick}
-          />
-          {isHvCpu && character && (
-            <CommentaryBox
-              characterName={character.name}
-              commentary={cpuMove.commentary}
-              characterId={character.id}
+            {isHvCpu && character && (
+              <MatchScore score={game.matchScore} characterName={character.name} />
+            )}
+            <GameBoard
+              board={game.board}
+              disabled={game.gameStatus !== 'playing' || cpuThinking}
+              cpuThinking={cpuThinking}
+              winningLine={game.winningLine}
+              onCellClick={handleCellClick}
             />
-          )}
-        </div>
-      )}
+            {isHvCpu && character && (
+              <CommentaryBox
+                characterName={character.name}
+                commentary={cpuMove.commentary}
+                characterId={character.id}
+              />
+            )}
+          </div>
+        )}
+      </ScreenTransition>
 
       <GameOverOverlay
         gameStatus={game.gameStatus}

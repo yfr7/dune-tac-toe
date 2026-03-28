@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import App from "../src/App";
@@ -19,9 +19,11 @@ describe("App - Opponent Selection Flow (T017)", () => {
       screen.getByRole("button", { name: "Human vs CPU" }),
     );
 
-    expect(
-      screen.getByRole("heading", { name: "Choose Your Opponent" }),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "Choose Your Opponent" }),
+      ).toBeInTheDocument();
+    });
     // Title screen should be gone
     expect(
       screen.queryByRole("heading", { name: "Dune Tac Toe" }),
@@ -36,16 +38,23 @@ describe("App - Opponent Selection Flow (T017)", () => {
     await user.click(
       screen.getByRole("button", { name: "Human vs CPU" }),
     );
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "Choose Your Opponent" }),
+      ).toBeInTheDocument();
+    });
 
     // Select Baron Harkonnen
     await user.click(
       screen.getByRole("heading", { name: "Baron Harkonnen" }).closest("button")!,
     );
 
-    // Should now see the game board
-    expect(
-      screen.getByRole("group", { name: "Game board - 3 by 3 grid" }),
-    ).toBeInTheDocument();
+    // Should now see the game board (wait for screen transition)
+    await waitFor(() => {
+      expect(
+        screen.getByRole("group", { name: "Game board - 3 by 3 grid" }),
+      ).toBeInTheDocument();
+    });
     // Opponent select should be gone
     expect(
       screen.queryByRole("heading", { name: "Choose Your Opponent" }),
@@ -62,10 +71,12 @@ describe("App - Opponent Selection Flow (T017)", () => {
       screen.getByRole("button", { name: "Human vs Human" }),
     );
 
-    // Should go directly to game, no opponent select
-    expect(
-      screen.getByRole("group", { name: "Game board - 3 by 3 grid" }),
-    ).toBeInTheDocument();
+    // Should go directly to game, no opponent select (wait for screen transition)
+    await waitFor(() => {
+      expect(
+        screen.getByRole("group", { name: "Game board - 3 by 3 grid" }),
+      ).toBeInTheDocument();
+    });
     expect(
       screen.queryByRole("heading", { name: "Choose Your Opponent" }),
     ).not.toBeInTheDocument();

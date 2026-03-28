@@ -100,6 +100,14 @@ export function BoardCell({
           ) : (
             <SeaSerpent className="w-[2rem] h-[2rem]" />
           )}
+          {/* Spice glow burst on placement */}
+          <span
+            className="absolute inset-0 flex items-center justify-center text-[2rem] leading-none pointer-events-none animate-glow-burst"
+            style={{ color: 'transparent' }}
+            aria-hidden="true"
+          >
+            {'\u25CF'}
+          </span>
           {/* Radial ripple on placement */}
           <span
             className="absolute inset-0 rounded-full border-2 animate-ripple-expand pointer-events-none"
