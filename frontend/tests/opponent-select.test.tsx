@@ -87,4 +87,25 @@ describe("OpponentSelect", () => {
     expect(handleSelect).toHaveBeenCalledOnce();
     expect(handleSelect).toHaveBeenCalledWith("stilgar");
   });
+
+  it("renders a faction icon (SVG) above each character name", () => {
+    const { container } = render(<OpponentSelect onSelectOpponent={() => {}} />);
+    const svgs = container.querySelectorAll("button svg[aria-hidden='true']");
+    expect(svgs).toHaveLength(3);
+  });
+
+  it("renders difficulty dots instead of diamond symbols", () => {
+    const { container } = render(<OpponentSelect onSelectOpponent={() => {}} />);
+    const dots = container.querySelectorAll("span.rounded-full");
+    // 3 cards × 3 dots = 9 total
+    expect(dots).toHaveLength(9);
+  });
+
+  it("applies faction border color to each card", () => {
+    const { container } = render(<OpponentSelect onSelectOpponent={() => {}} />);
+    const buttons = container.querySelectorAll("button");
+    for (const button of buttons) {
+      expect(button.style.borderColor).toBeTruthy();
+    }
+  });
 });
