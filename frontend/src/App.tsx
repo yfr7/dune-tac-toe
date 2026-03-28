@@ -7,6 +7,7 @@ import { GameOverOverlay } from './components/game-over-overlay';
 import { MatchScore } from './components/match-score';
 import { OpponentIndicator } from './components/opponent-indicator';
 import { OpponentSelect } from './components/opponent-select';
+import { SandParticles } from './components/sand-particles';
 import { TitleScreen } from './components/title-screen';
 import { TurnIndicator } from './components/turn-indicator';
 import { getCharacter } from './data/characters';
@@ -123,6 +124,8 @@ function App() {
 
   return (
     <>
+      {(currentScreen === 'title' || currentScreen === 'game-over') && <SandParticles />}
+
       {currentScreen === 'title' && <TitleScreen onSelectMode={handleSelectMode} />}
 
       {currentScreen === 'opponent-select' && (
