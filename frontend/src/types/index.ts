@@ -37,3 +37,10 @@ export interface CpuMoveResponse {
   move: { row: number; col: number };
   commentary: string;
 }
+
+export interface MatchScore {
+  playerWins: number;
+  cpuWins: number;
+}
+
+export type { FactionConfig } from '../data/faction-config';
