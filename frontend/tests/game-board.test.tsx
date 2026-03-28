@@ -232,4 +232,22 @@ describe("GameBoard", () => {
       expect(grid.className).not.toContain("opacity-60");
     });
   });
+
+  describe('T010: Board visual depth', () => {
+    it('applies layered box-shadow for carved depth and grid glow', () => {
+      render(
+        <GameBoard
+          board={EMPTY_BOARD}
+          disabled={false}
+          winningLine={null}
+          onCellClick={() => {}}
+        />,
+      );
+      const grid = screen.getByRole('group');
+      expect(grid.style.boxShadow).toContain('inset 0 2px 4px');
+      expect(grid.style.boxShadow).toContain('0 4px 12px');
+      expect(grid.style.boxShadow).toContain('rgba(196,151,59');
+      expect(grid.style.boxShadow).toContain('rgba(231,155,7');
+    });
+  });
 });
