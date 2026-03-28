@@ -3,6 +3,7 @@ import { AttributionFooter } from './components/attribution-footer';
 import { CinematicInterstitial } from './components/cinematic-interstitial';
 import { CommentaryBox } from './components/commentary-box';
 import { ErrorToast } from './components/error-toast';
+import { FirstMovePrompt } from './components/first-move-prompt';
 import { GameBoard } from './components/game-board';
 import { GameOverOverlay } from './components/game-over-overlay';
 import { MatchScore } from './components/match-score';
@@ -174,6 +175,7 @@ function App() {
               gameMode={game.gameMode}
               characterId={game.selectedOpponent ?? undefined}
             />
+            <FirstMovePrompt board={game.board} />
             {isHvCpu && character && (
               <MatchScore score={game.matchScore} characterName={character.name} />
             )}
