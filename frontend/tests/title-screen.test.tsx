@@ -53,4 +53,24 @@ describe("TitleScreen", () => {
     expect(handleSelect).toHaveBeenCalledOnce();
     expect(handleSelect).toHaveBeenCalledWith("human-vs-cpu");
   });
+
+  it("renders a decorative separator between title area and buttons", () => {
+    const { container } = render(<TitleScreen onSelectMode={() => {}} />);
+    const separator = container.querySelector('[aria-hidden="true"].h-px');
+    expect(separator).toBeInTheDocument();
+  });
+
+  it("renders a spice glow element behind the title", () => {
+    const { container } = render(<TitleScreen onSelectMode={() => {}} />);
+    const glowElements = container.querySelectorAll('[aria-hidden="true"]');
+    // First aria-hidden is the glow, second is the separator
+    expect(glowElements.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("applies gold gradient text effect to the title", () => {
+    render(<TitleScreen onSelectMode={() => {}} />);
+    const title = screen.getByRole("heading", { name: "Dune Tac Toe" });
+    expect(title.className).toContain("bg-clip-text");
+    expect(title.className).toContain("text-transparent");
+  });
 });
