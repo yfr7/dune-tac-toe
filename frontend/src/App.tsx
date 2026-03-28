@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGame } from './hooks/use-game';
 import { useCpuMove } from './hooks/use-cpu-move';
+import { useDocumentTitle } from './hooks/use-document-title';
 import { TitleScreen } from './components/title-screen';
 import { OpponentSelect } from './components/opponent-select';
 import { GameBoard } from './components/game-board';
@@ -113,6 +114,16 @@ function App() {
   const character = game.selectedOpponent
     ? getCharacter(game.selectedOpponent)
     : null;
+
+  useDocumentTitle({
+    screen: currentScreen,
+    gameStatus: game.gameStatus,
+    currentTurn: game.currentTurn,
+    winner: game.winner,
+    isHvCpu,
+    cpuThinking,
+    characterName: character?.name ?? null,
+  });
 
   return (
     <>
