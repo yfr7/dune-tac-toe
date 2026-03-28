@@ -8,6 +8,7 @@ import { TurnIndicator } from './components/turn-indicator';
 import { CommentaryBox } from './components/commentary-box';
 import { GameOverOverlay } from './components/game-over-overlay';
 import { ErrorToast } from './components/error-toast';
+import { AttributionFooter } from './components/attribution-footer';
 import { getCharacter } from './data/characters';
 import type { CharacterId, GameMode } from './types';
 
@@ -163,6 +164,8 @@ function App() {
           onDismiss={handleDismissError}
         />
       )}
+
+      <AttributionFooter />
     </>
   );
 }
