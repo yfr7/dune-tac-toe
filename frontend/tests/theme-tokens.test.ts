@@ -98,7 +98,7 @@ describe('Dune theme CSS custom properties', () => {
     expect(cssContent).toContain('--sand-dark: #1a1409');
     expect(cssContent).toContain('--gold: #c4973b');
     expect(cssContent).toContain('--bone: #e8dcc8');
-    expect(cssContent).toContain('--blood-red: #c44040');
+    expect(cssContent).toContain('--blood-red: #a83838');
   });
 
   it('sets spacing values using 4/8px grid', () => {

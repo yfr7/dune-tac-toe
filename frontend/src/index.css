@@ -19,13 +19,13 @@
   --gold: #c4973b;
   --gold-bright: #e8b94a;
   --spice-orange: #d4722a;
-  --dust: #8a7d6b;
+  --dust: #978a78;
   --bone: #e8dcc8;
-  --deep-blue: #0a1628;
-  --blood-red: #c44040;
+  --deep-blue: #5882a8;
+  --blood-red: #a83838;
   --success-spice: #b8860b;
   --atreides-blue: #4a7c8a;
-  --difficulty-easy: #5a8a3c;
+  --difficulty-easy: #65993f;
   --difficulty-medium: var(--gold);
   --difficulty-hard: var(--blood-red);
   --dust-bright: #a89b88;
