@@ -116,12 +116,57 @@ describe('BoardCell', () => {
   it('dims location name when piece is placed', () => {
     const { rerender } = render(<BoardCell {...defaultProps} />);
     const emptyName = screen.getByText('Arrakeen');
-    expect(emptyName.className).toContain('text-dust');
+    expect(emptyName.className).toContain('text-dust-bright');
     expect(emptyName.className).not.toContain('text-dust/50');
 
     rerender(<BoardCell {...defaultProps} cellValue="X" />);
     const placedName = screen.getByText('Arrakeen');
     expect(placedName.className).toContain('text-dust/50');
+  });
+
+  describe('T011: Board cell hover and contrast enhancements', () => {
+    it('applies scale-[1.02] hover class on empty non-disabled cells', () => {
+      render(<BoardCell {...defaultProps} />);
+      const btn = screen.getByRole('button');
+      expect(btn.className).toContain('hover:scale-[1.02]');
+    });
+
+    it('does not apply hover scale on occupied cells', () => {
+      render(<BoardCell {...defaultProps} cellValue="X" />);
+      const btn = screen.getByRole('button');
+      expect(btn.className).not.toContain('hover:scale-[1.02]');
+    });
+
+    it('uses --dust-bright for empty cell location name contrast', () => {
+      render(<BoardCell {...defaultProps} />);
+      const name = screen.getByText('Arrakeen');
+      expect(name.className).toContain('text-dust-bright');
+    });
+
+    it('uses letter-spacing 0.08em on location name', () => {
+      render(<BoardCell {...defaultProps} />);
+      const name = screen.getByText('Arrakeen');
+      expect(name.className).toContain('tracking-[0.08em]');
+    });
+
+    it('applies custom dagger cursor on empty non-disabled cells', () => {
+      render(<BoardCell {...defaultProps} />);
+      const btn = screen.getByRole('button');
+      expect(btn.style.cursor).toContain('crosshair');
+      expect(btn.style.cursor).toContain('data:image/svg+xml');
+    });
+
+    it('does not apply custom cursor on occupied cells', () => {
+      render(<BoardCell {...defaultProps} cellValue="X" />);
+      const btn = screen.getByRole('button');
+      expect(btn.style.cursor).toBe('');
+    });
+
+    it('does not apply custom cursor on disabled cells', () => {
+      render(<BoardCell {...defaultProps} disabled />);
+      const btn = screen.getByRole('button');
+      expect(btn.style.cursor).toBe('');
+    });
   });
 
   describe('invalid move flash (T024)', () => {
