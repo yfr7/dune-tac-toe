@@ -39,7 +39,7 @@ export function CommentaryBox({
       aria-live="polite"
       data-character={characterId}
       className={cn(
-        'max-w-[480px] w-full mx-auto mt-[var(--space-6)] px-[var(--space-4)] py-[var(--space-4)] border rounded-[8px] animate-commentary-fade-in',
+        'max-w-[480px] w-full mx-auto mt-[var(--space-6)] px-[var(--space-4)] py-[var(--space-4)] border rounded-[8px] animate-slide-up-fade',
         theme.container,
       )}
     >

@@ -37,10 +37,10 @@ describe('CommentaryBox', () => {
     expect(box).toHaveAttribute('aria-live', 'polite');
   });
 
-  it('applies fade-in animation class', () => {
+  it('applies slide-up-fade animation class', () => {
     render(<CommentaryBox {...defaultProps} />);
     const box = screen.getByText('Baron Harkonnen').closest('div');
-    expect(box?.className).toContain('animate-commentary-fade-in');
+    expect(box?.className).toContain('animate-slide-up-fade');
   });
 
   it('renders different character names', () => {

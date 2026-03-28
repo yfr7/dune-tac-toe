@@ -296,6 +296,14 @@
   }
 }
 
+/* — Global button feedback — */
+button {
+  transition: transform 80ms ease-out;
+}
+button:active {
+  transform: scale(0.97);
+}
+
 /* — Base resets — */
 body {
   margin: 0;

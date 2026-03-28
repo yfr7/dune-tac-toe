@@ -73,4 +73,12 @@ describe("TitleScreen", () => {
     expect(title.className).toContain("bg-clip-text");
     expect(title.className).toContain("text-transparent");
   });
+
+  it("does not apply inline active:scale (handled globally in CSS)", () => {
+    render(<TitleScreen onSelectMode={() => {}} />);
+    const buttons = screen.getAllByRole("button");
+    for (const button of buttons) {
+      expect(button.className).not.toContain("active:scale");
+    }
+  });
 });

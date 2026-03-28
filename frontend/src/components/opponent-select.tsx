@@ -64,7 +64,6 @@ export function OpponentSelect({ onSelectOpponent }: OpponentSelectProps) {
                 "transition-all duration-[var(--duration-fast)] ease-out",
                 "hover:-translate-y-[4px]",
                 "focus-visible:outline-2 focus-visible:outline-gold-bright focus-visible:outline-offset-2",
-                "active:scale-[0.97]",
               )}
               style={{
                 borderWidth: "1px",
