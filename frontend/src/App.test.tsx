@@ -216,8 +216,8 @@ describe('HvCPU flow', () => {
 
     // Commentary should be displayed
     expect(screen.getByText(/The Palace is mine now/)).toBeInTheDocument();
-    // Character name label should appear
-    expect(screen.getByText('Baron Harkonnen')).toBeInTheDocument();
+    // Character name should appear (in opponent indicator and commentary box)
+    expect(screen.getAllByText('Baron Harkonnen').length).toBeGreaterThanOrEqual(1);
   });
 
   it('disables board during CPU thinking', async () => {

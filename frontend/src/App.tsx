@@ -4,6 +4,8 @@ import { CommentaryBox } from './components/commentary-box';
 import { ErrorToast } from './components/error-toast';
 import { GameBoard } from './components/game-board';
 import { GameOverOverlay } from './components/game-over-overlay';
+import { MatchScore } from './components/match-score';
+import { OpponentIndicator } from './components/opponent-indicator';
 import { OpponentSelect } from './components/opponent-select';
 import { TitleScreen } from './components/title-screen';
 import { TurnIndicator } from './components/turn-indicator';
@@ -129,6 +131,14 @@ function App() {
 
       {(currentScreen === 'game' || currentScreen === 'game-over') && (
         <div className="flex flex-col items-center flex-1 pt-[var(--space-12)] px-[var(--space-4)]">
+          {isHvCpu && character && (
+            <OpponentIndicator
+              characterId={character.id}
+              characterName={character.name}
+              difficulty={character.difficulty}
+              isCpuTurn={game.currentTurn === 'O' && game.gameStatus === 'playing'}
+            />
+          )}
           <TurnIndicator
             currentTurn={game.currentTurn}
             cpuThinking={cpuThinking}
@@ -136,6 +146,9 @@ function App() {
             gameMode={game.gameMode}
             characterId={game.selectedOpponent ?? undefined}
           />
+          {isHvCpu && character && (
+            <MatchScore score={game.matchScore} characterName={character.name} />
+          )}
           <GameBoard
             board={game.board}
             disabled={game.gameStatus !== 'playing' || cpuThinking}
