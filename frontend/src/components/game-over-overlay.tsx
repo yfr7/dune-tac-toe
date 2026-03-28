@@ -60,7 +60,7 @@ export function GameOverOverlay({
     >
       <div className="bg-sand-medium rounded-[8px] p-[var(--space-8)] max-w-[400px] w-[90%] text-center animate-scale-in">
         <h2
-          className="font-display font-bold text-[2rem] leading-[1.1] text-gold-bright"
+          className="font-heading font-bold text-[2rem] leading-[1.1] text-gold-bright"
           aria-live="assertive"
         >
           {winnerText}

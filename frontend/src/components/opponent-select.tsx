@@ -34,7 +34,7 @@ function SpiceIcons({ count }: { count: number }) {
 export function OpponentSelect({ onSelectOpponent }: OpponentSelectProps) {
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-[var(--space-4)]">
-      <h2 className="font-sans font-semibold text-[1.5rem] leading-[1.3] tracking-[-0.01em] text-bone mb-[var(--space-8)]">
+      <h2 className="font-heading font-semibold text-[1.5rem] leading-[1.3] tracking-[-0.01em] text-bone mb-[var(--space-8)]">
         Choose Your Opponent
       </h2>
 
@@ -54,7 +54,7 @@ export function OpponentSelect({ onSelectOpponent }: OpponentSelectProps) {
               "focus-visible:outline-2 focus-visible:outline-gold-bright focus-visible:outline-offset-2",
             )}
           >
-            <h3 className="font-display font-semibold text-[1.25rem] text-bone">
+            <h3 className="font-heading font-semibold text-[1.25rem] text-bone">
               {character.name}
             </h3>
 
