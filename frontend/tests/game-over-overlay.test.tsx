@@ -71,7 +71,7 @@ describe("GameOverOverlay", () => {
         onRematch={() => {}}
       />,
     );
-    expect(screen.getByText("A Draw in the Desert")).toBeInTheDocument();
+    expect(screen.getByText("The Desert Claims All")).toBeInTheDocument();
   });
 
   it("renders HvCPU human win text", () => {
@@ -85,7 +85,7 @@ describe("GameOverOverlay", () => {
         onRematch={() => {}}
       />,
     );
-    expect(screen.getByText("You Have Conquered!")).toBeInTheDocument();
+    expect(screen.getByText("House Atreides Triumphs!")).toBeInTheDocument();
   });
 
   it("renders HvCPU cpu win text", () => {
@@ -99,7 +99,7 @@ describe("GameOverOverlay", () => {
         onRematch={() => {}}
       />,
     );
-    expect(screen.getByText("The CPU Prevails!")).toBeInTheDocument();
+    expect(screen.getByText("The Desert Claims Victory!")).toBeInTheDocument();
   });
 
   it("displays a closing quote", () => {
@@ -207,6 +207,153 @@ describe("GameOverOverlay", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveAttribute("aria-modal", "true");
     expect(dialog).toHaveAttribute("aria-label", "Game over");
+  });
+
+  describe("US6: visual polish (T022)", () => {
+    const defaultProps = {
+      onPlayAgain: () => {},
+      onRematch: () => {},
+    };
+
+    it("applies victory-pulse animation on win title", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const heading = screen.getByRole("heading", { level: 2 });
+      expect(heading.className).toContain("animate-victory-pulse");
+    });
+
+    it("does not apply victory-pulse on draw", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="draw"
+          winner={null}
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const heading = screen.getByRole("heading", { level: 2 });
+      expect(heading.className).not.toContain("animate-victory-pulse");
+    });
+
+    it("scrim has opacity 0.60", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const dialog = screen.getByRole("dialog");
+      expect(dialog.style.backgroundColor).toBe("rgba(26, 20, 9, 0.6)");
+    });
+
+    it("applies grayscale backdrop-filter on draw", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="draw"
+          winner={null}
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const dialog = screen.getByRole("dialog");
+      expect(dialog.style.backdropFilter).toBe("grayscale(0.5)");
+    });
+
+    it("does not apply grayscale backdrop-filter on win", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const dialog = screen.getByRole("dialog");
+      expect(dialog.style.backdropFilter).toBe("");
+    });
+
+    it("renders Rematch as first (primary) button and Play Again as second (secondary)", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const buttons = screen.getAllByRole("button");
+      expect(buttons[0]).toHaveTextContent("Rematch");
+      expect(buttons[1]).toHaveTextContent("Play Again");
+    });
+
+    it("Rematch button has gold background (primary style)", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const rematchBtn = screen.getByRole("button", { name: "Rematch" });
+      expect(rematchBtn.className).toContain("bg-gold");
+    });
+
+    it("Play Again button has transparent background with border (secondary style)", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="X"
+          opponent={null}
+          isHvCpu={false}
+        />,
+      );
+      const playAgainBtn = screen.getByRole("button", { name: "Play Again" });
+      expect(playAgainBtn.className).toContain("bg-transparent");
+      expect(playAgainBtn.className).toContain("border-gold");
+    });
+
+    it("shows faction victory title for HvCPU Baron win", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="O"
+          opponent="baron_harkonnen"
+          isHvCpu={true}
+        />,
+      );
+      expect(screen.getByText("The Baron Prevails!")).toBeInTheDocument();
+    });
+
+    it("shows faction victory title for HvCPU Reverend Mother win", () => {
+      render(
+        <GameOverOverlay
+          {...defaultProps}
+          gameStatus="won"
+          winner="O"
+          opponent="reverend_mother"
+          isHvCpu={true}
+        />,
+      );
+      expect(screen.getByText("The Bene Gesserit See All!")).toBeInTheDocument();
+    });
   });
 
   describe("US3: character-specific closing quotes (T021)", () => {

@@ -124,7 +124,7 @@ describe('App screen routing', () => {
     await user.click(screen.getByRole('button', { name: /tuono basin - empty/i })); // X (2,1) — draw!
 
     expect(screen.getByRole('dialog', { name: /game over/i })).toBeInTheDocument();
-    expect(screen.getByText('A Draw in the Desert')).toBeInTheDocument();
+    expect(screen.getByText('The Desert Claims All')).toBeInTheDocument();
   });
 
   it('alternates turns correctly (X first, then O)', async () => {
