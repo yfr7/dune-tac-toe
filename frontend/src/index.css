@@ -24,10 +24,18 @@
   --deep-blue: #0a1628;
   --blood-red: #c44040;
   --success-spice: #b8860b;
+  --atreides-blue: #4a7c8a;
+  --difficulty-easy: #5a8a3c;
+  --difficulty-medium: var(--gold);
+  --difficulty-hard: var(--blood-red);
+  --dust-bright: #a89b88;
 
   /* — Typography — */
   --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-body: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-title: "Cinzel Decorative", "Cormorant Garamond", Georgia, serif;
+  --font-heading: "Cinzel", "Cormorant Garamond", Georgia, serif;
+  --font-hud: "Orbitron", "Inter Variable", system-ui, sans-serif;
 
   /* — Spacing (8px grid) — */
   --space-1: 4px;
@@ -89,6 +97,9 @@
 @theme inline {
   --font-display: var(--font-display);
   --font-sans: var(--font-body);
+  --font-title: var(--font-title);
+  --font-heading: var(--font-heading);
+  --font-hud: var(--font-hud);
   --color-sand-dark: var(--sand-dark);
   --color-sand-medium: var(--sand-medium);
   --color-sand-light: var(--sand-light);
@@ -100,6 +111,11 @@
   --color-deep-blue: var(--deep-blue);
   --color-blood-red: var(--blood-red);
   --color-success-spice: var(--success-spice);
+  --color-atreides-blue: var(--atreides-blue);
+  --color-difficulty-easy: var(--difficulty-easy);
+  --color-difficulty-medium: var(--difficulty-medium);
+  --color-difficulty-hard: var(--difficulty-hard);
+  --color-dust-bright: var(--dust-bright);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -131,6 +147,14 @@
   --animate-winning-pulse: winning-pulse var(--duration-pulse) ease-in-out infinite;
   --animate-commentary-fade-in: commentary-fade-in var(--duration-slow) ease-out;
   --animate-thinking-dots: thinking-dots 1.4s ease-in-out infinite;
+  --animate-draw-line: draw-line 400ms ease-out forwards;
+  --animate-screen-enter: screen-enter var(--duration-base) ease-out forwards;
+  --animate-screen-exit: screen-exit var(--duration-base) ease-in forwards;
+  --animate-ripple-expand: ripple-expand var(--duration-base) ease-out forwards;
+  --animate-glow-burst: glow-burst var(--duration-slow) ease-out forwards;
+  --animate-victory-pulse: victory-pulse 1500ms ease-in-out infinite;
+  --animate-slide-up-fade: slide-up-fade var(--duration-slow) ease-out forwards;
+  --animate-particle-drift: particle-drift 25s linear infinite;
 }
 
 @keyframes piece-place {
@@ -174,11 +198,119 @@
   }
 }
 
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes screen-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes screen-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes ripple-expand {
+  from {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+@keyframes glow-burst {
+  from {
+    text-shadow: 0 0 12px rgba(232, 185, 74, 0.8);
+  }
+  to {
+    text-shadow: 0 0 0px rgba(232, 185, 74, 0);
+  }
+}
+
+@keyframes victory-pulse {
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(232, 185, 74, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(232, 185, 74, 0.8), 0 0 40px rgba(212, 114, 42, 0.3);
+  }
+}
+
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes particle-drift {
+  0% {
+    transform: translateX(-10%) translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(110%) translateY(-20px);
+    opacity: 0;
+  }
+}
+
 /* — Base resets — */
 body {
   margin: 0;
-  background: var(--sand-dark);
+  background: linear-gradient(
+    180deg,
+    var(--sand-dark) 0%,
+    #2a1f10 40%,
+    #1f1a0e 100%
+  );
   color: var(--bone);
+  min-height: 100svh;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("./assets/noise-medium.svg");
+  background-repeat: repeat;
+  background-size: 300px 300px;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
 }
 
 #root {
@@ -188,6 +320,8 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 /* — Reduced motion — */
